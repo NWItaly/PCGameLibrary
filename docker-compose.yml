@@ -8,6 +8,7 @@ services:
       - pc-game-library-node-modules:/app/node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true
+    command: npm run start:local -- --host 0.0.0.0 --poll 500
 
 volumes:
   pc-game-library-node-modules:

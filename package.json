@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:local": "ng serve --configuration=local --host 0.0.0.0",
     "build": "ng build",
     "deploy": "ng build --base-href /pc-game-library/ && npx angular-cli-ghpages --dir=dist/pc-game-library/browser"
   },
