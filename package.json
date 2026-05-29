@@ -9,6 +9,9 @@
     "deploy": "ng build --base-href /pc-game-library/ && npx angular-cli-ghpages --dir=dist/pc-game-library/browser"
   },
   "private": true,
+  "engines": {
+    "node": ">=26.0.0"
+  },
   "dependencies": {
     "@angular/animations": "^19.0.0",
     "@angular/cdk": "^19.0.0",
