@@ -9,7 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from './core/services/auth.service';
-import { ThemeService, ThemeMode } from './core/services/theme.service';
+import { ThemeService } from './core/services/theme.service';
 import { GameListComponent } from './features/game-list/game-list.component';
 
 @Component({
@@ -52,5 +52,5 @@ export class AppComponent implements OnInit {
   get activeLang(): string {
     return this.transloco.getActiveLang();
   }
-  
+
 }

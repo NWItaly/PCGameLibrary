@@ -7,6 +7,7 @@ import { provideTransloco, Translation, TranslocoLoader } from '@jsverse/translo
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { routes } from './app.routes';
 
 // Carica i file JSON da assets/i18n/
 @Injectable({ providedIn: 'root' })
@@ -23,7 +24,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(),
     provideAnimationsAsync(),
-    provideRouter([]),
+    provideRouter(routes),
     provideTransloco({
       config: {
         availableLangs: ['it', 'en'],

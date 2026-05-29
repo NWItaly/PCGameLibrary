@@ -1,6 +1,7 @@
 {
   "name": "pc-game-library",
   "version": "0.0.1",
+  "sideEffects": false,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
