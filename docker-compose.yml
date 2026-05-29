@@ -1,0 +1,13 @@
+services:
+  pc-game-library:
+    build: .
+    ports:
+      - "4200:4200"
+    volumes:
+      - .:/app
+      - pc-game-library-node-modules:/app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+volumes:
+  pc-game-library-node-modules:

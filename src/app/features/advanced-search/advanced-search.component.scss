@@ -1,0 +1,50 @@
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: min(480px, 90vw);
+  padding-top: 8px;
+  overflow-x: hidden;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.toggle-label {
+  font-size: 14px;
+  opacity: 0.8;
+  min-width: 120px;
+}
+
+.slider-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slider-values {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  opacity: 0.7;
+  padding: 0 8px;
+}
+
+.full-slider {
+  width: calc(100% - 16px);
+  margin: 0 8px;
+  box-sizing: border-box;
+}
+
+mat-divider {
+  margin: 4px 0;
+}

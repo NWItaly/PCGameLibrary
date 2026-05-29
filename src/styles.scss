@@ -1,0 +1,45 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Tema chiaro
+$light-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$cyan-palette,
+      ),
+    ));
+
+// Tema scuro
+$dark-theme: mat.define-theme((color: (theme-type: dark,
+        primary: mat.$cyan-palette,
+      ),
+    ));
+
+// Stili base applicati sempre
+html {
+  @include mat.all-component-themes($light-theme);
+}
+
+// Classe applicata da ThemeService
+html.dark-theme {
+  @include mat.all-component-themes($dark-theme);
+  background-color: #121212;
+  color: #e0e0e0;
+  --platform-icon-filter: invert(1) brightness(2);
+}
+
+html.light-theme {
+  background-color: #fafafa;
+  color: #212121;
+
+  --platform-icon-filter: none;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, sans-serif;
+  height: 100%;
+}
+
+.mat-mdc-dialog-content {
+  overflow-x: hidden !important;
+}

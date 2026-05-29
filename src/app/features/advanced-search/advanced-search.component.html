@@ -1,0 +1,142 @@
+<h2 mat-dialog-title>{{ 'search.advancedTitle' | transloco }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="search-form">
+
+    <!-- Piattaforma -->
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'search.platform' | transloco }}</mat-label>
+      <mat-select formControlName="platforms" multiple>
+        @for (p of data.options.platforms; track p) {
+          <mat-option [value]="p">{{ p }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Genere -->
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'search.genre' | transloco }}</mat-label>
+      <mat-select formControlName="genres" multiple>
+        @for (g of data.options.genres; track g) {
+          <mat-option [value]="g">{{ g }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Caratteristiche -->
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'search.feature' | transloco }}</mat-label>
+      <mat-select formControlName="features" multiple>
+        @for (f of data.options.features; track f) {
+          <mat-option [value]="f">{{ f }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-divider />
+
+    <!-- Supporto Italiano -->
+    <div class="toggle-row">
+      <span class="toggle-label">{{ 'search.italianSupport' | transloco }}</span>
+      <mat-button-toggle-group formControlName="italianSupport">
+        <mat-button-toggle [value]="null">{{ 'search.all' | transloco }}</mat-button-toggle>
+        <mat-button-toggle [value]="true">{{ 'search.yes' | transloco }}</mat-button-toggle>
+        <mat-button-toggle [value]="false">{{ 'search.no' | transloco }}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <!-- VR -->
+    <div class="toggle-row">
+      <span class="toggle-label">{{ 'search.vr' | transloco }}</span>
+      <mat-button-toggle-group formControlName="vr">
+        <mat-button-toggle [value]="null">{{ 'search.all' | transloco }}</mat-button-toggle>
+        <mat-button-toggle [value]="true">{{ 'search.yes' | transloco }}</mat-button-toggle>
+        <mat-button-toggle [value]="false">{{ 'search.no' | transloco }}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <mat-divider />
+
+    <!-- Stato Stefano -->
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'search.stateStefano' | transloco }}</mat-label>
+      <mat-select formControlName="statesStefano" multiple>
+        @for (s of data.options.statesStefano; track s) {
+          <mat-option [value]="s">{{ s }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Stato Erica -->
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'search.stateErica' | transloco }}</mat-label>
+      <mat-select formControlName="statesErica" multiple>
+        @for (s of data.options.statesErica; track s) {
+          <mat-option [value]="s">{{ s }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Stato Alessandro -->
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'search.stateAlessandro' | transloco }}</mat-label>
+      <mat-select formControlName="statesAlessandro" multiple>
+        @for (s of data.options.statesAlessandro; track s) {
+          <mat-option [value]="s">{{ s }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-divider />
+
+    <!-- Slider prezzo -->
+    <div class="slider-section">
+      <span class="toggle-label">{{ 'search.price' | transloco }}</span>
+      <div class="slider-values">
+        <span>{{ formatPrice(form.get('priceMin')!.value) }}</span>
+        <span>{{ formatPrice(form.get('priceMax')!.value) }}</span>
+      </div>
+      <mat-slider [min]="data.options.priceMin" [max]="data.options.priceMax" [step]="1" class="full-slider">
+        <input matSliderStartThumb formControlName="priceMin" />
+        <input matSliderEndThumb formControlName="priceMax" />
+      </mat-slider>
+    </div>
+
+    <!-- Slider anno pubblicazione -->
+    <div class="slider-section">
+      <span class="toggle-label">{{ 'search.releaseYear' | transloco }}</span>
+      <div class="slider-values">
+        <span>{{ form.get('releaseYearMin')!.value }}</span>
+        <span>{{ form.get('releaseYearMax')!.value }}</span>
+      </div>
+      <mat-slider [min]="data.options.releaseYearMin" [max]="data.options.releaseYearMax" [step]="1" class="full-slider">
+        <input matSliderStartThumb formControlName="releaseYearMin" />
+        <input matSliderEndThumb formControlName="releaseYearMax" />
+      </mat-slider>
+    </div>
+
+    <!-- Slider anno acquisto -->
+    <div class="slider-section">
+      <span class="toggle-label">{{ 'search.buyYear' | transloco }}</span>
+      <div class="slider-values">
+        <span>{{ form.get('buyYearMin')!.value }}</span>
+        <span>{{ form.get('buyYearMax')!.value }}</span>
+      </div>
+      <mat-slider [min]="data.options.buyYearMin" [max]="data.options.buyYearMax" [step]="1" class="full-slider">
+        <input matSliderStartThumb formControlName="buyYearMin" />
+        <input matSliderEndThumb formControlName="buyYearMax" />
+      </mat-slider>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="reset()">
+    <mat-icon>clear</mat-icon> {{ 'search.reset' | transloco }}
+  </button>
+  <button mat-button (click)="dialogRef.close()">{{ 'form.cancel' | transloco }}</button>
+  <button mat-flat-button color="primary" (click)="apply()">
+    {{ 'search.apply' | transloco }}
+  </button>
+</mat-dialog-actions>

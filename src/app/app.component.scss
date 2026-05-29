@@ -1,0 +1,64 @@
+.sidenav-container {
+  height: 100vh;
+}
+
+.app-sidenav {
+  width: 280px;
+}
+
+.sidenav-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.sidenav-section {
+  padding: 8px 0;
+}
+
+.sidenav-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin: 0 0 8px;
+}
+
+/* Forza i toggle group a occupare tutta la larghezza */
+.toggle-group {
+  width: 100%;
+
+  ::ng-deep .mat-button-toggle {
+    flex: 1;
+    font-size: 13px;
+  }
+}
+
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 8px;
+}
+
+.logo-icon {
+  font-size: 24px;
+}
+
+.toolbar-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.app-content {
+  // max-width: 1280px;
+  margin: 24px auto;
+  padding: 0 16px;
+}

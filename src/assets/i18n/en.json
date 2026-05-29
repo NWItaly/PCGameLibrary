@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "title": "Game Library",
+    "privacy": "Privacy Policy"
+  },
+  "sidenav": {
+    "view": "View",
+    "viewCard": "Cards",
+    "viewTable": "Table",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "language": "Language"
+  },
+  "list": {
+    "search": "Search game...",
+    "searchPlaceholder": "Title, genre or platform",
+    "filters": "Filters",
+    "add": "Add",
+    "count": "{{ count }} games",
+    "empty": "No games found.",
+    "emptySearch": "No results for \"{{ query }}\"."
+  },
+  "table": {
+    "title": "Title",
+    "genre": "Genre",
+    "platform": "Platform",
+    "releaseDate": "Year",
+    "rating": "Rating",
+    "actions": ""
+  },
+  "form": {
+    "titleAdd": "New game",
+    "titleEdit": "Edit game",
+    "title": "Title",
+    "genre": "Genre",
+    "platform": "Platform",
+    "releaseDate": "Release year",
+    "rating": "Rating",
+    "image": "Image URL",
+    "cancel": "Cancel",
+    "save": "Save",
+    "add": "Add",
+    "required": "Required field"
+  },
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Delete \"{{ title }}\"?"
+  },
+  "errors": {
+    "loadFailed": "Error loading games.",
+    "addFailed": "Error while adding.",
+    "editFailed": "Error while editing.",
+    "deleteFailed": "Error while deleting."
+  },
+  "success": {
+    "added": "Game added!",
+    "updated": "Game updated!",
+    "deleted": "Game deleted."
+  },
+  "auth": {
+    "login": "Sign in with Google",
+    "logout": "Sign out"
+  },
+  "search": {
+    "advancedTitle": "Advanced search",
+    "platform": "Platform",
+    "genre": "Genre",
+    "feature": "Features",
+    "italianSupport": "Italian support",
+    "vr": "VR",
+    "stateStefano": "Stefano status",
+    "stateErica": "Erica status",
+    "stateAlessandro": "Alessandro status",
+    "price": "Price (€)",
+    "releaseYear": "Release year",
+    "buyYear": "Purchase year",
+    "all": "All",
+    "yes": "Yes",
+    "no": "No",
+    "apply": "Apply",
+    "reset": "Reset"
+  }
+}

@@ -1,0 +1,67 @@
+<mat-card class="game-card">
+  <!-- Immagine di copertina -->
+  <div class="card-image-wrapper">
+    @if (imageUrl) {
+    <img mat-card-image [src]="imageUrl" [alt]="game().title" class="card-image" (error)="onImageError($event)" />
+    } @else {
+    <div class="card-image-placeholder">
+      <mat-icon>sports_esports</mat-icon>
+    </div>
+    }
+  </div>
+
+  <mat-card-content class="card-content">
+    <!-- Titolo -->
+    <h3 class="card-title" [title]="game().title">{{ game().title }}</h3>
+
+    <!-- Metadati: anno, piattaforma, rating -->
+    <div class="card-meta">
+
+      @if (game().platform) {
+      <app-platform-icon [platform]="game().platform!" />
+      }
+
+      @if (releaseYear) {
+      <span class="meta-year">{{ releaseYear }}</span>
+      }
+
+      @if (game().rating) {
+      <span class="meta-rating">
+        <mat-icon class="rating-icon">star</mat-icon>
+        {{ game().rating }}
+      </span>
+      }
+
+      @if (game().price) {
+      <span class="meta-price">{{ game().price }} €</span>
+      }
+    </div>
+
+    <!-- Genere -->
+    @if (game().genres) {
+    <span class="card-genre">{{ game().genres.join(',') }}</span>
+    }
+  </mat-card-content>
+
+  <!-- Azioni visibili solo agli utenti loggati -->
+  <mat-card-actions class="card-actions">
+    @if (game().steamId) {
+    <a [href]="'https://store.steampowered.com/app/' + game().steamId" target="_blank" rel="noopener noreferrer"
+      mat-icon-button [matTooltip]="'Steam'" (click)="$event.stopPropagation()">
+      <mat-icon>open_in_new</mat-icon>
+    </a>
+    }
+    @if (game().steamId && canEdit()) {
+    <span class="actions-spacer"></span>
+    }
+    @if (canEdit()) {
+    <button mat-icon-button [matTooltip]="translate.t('actions.edit')" (click)="editClicked.emit(game())">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button color="warn" [matTooltip]="translate.t('actions.delete')"
+      (click)="deleteClicked.emit(game())">
+      <mat-icon>delete</mat-icon>
+    </button>
+    }
+  </mat-card-actions>
+</mat-card>

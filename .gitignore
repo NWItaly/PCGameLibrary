@@ -1,0 +1,18 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Angular build output
+dist/
+.angular/
+
+# Environment files
+#src/environments/
+client_secrets*.json
+
+# Docker
+.env
+
+# OS
+.DS_Store
+Thumbs.db

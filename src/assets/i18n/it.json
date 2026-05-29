@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "title": "Libreria Giochi",
+    "privacy": "Privacy Policy"
+  },
+  "sidenav": {
+    "view": "Visualizzazione",
+    "viewCard": "Card",
+    "viewTable": "Tabella",
+    "theme": "Tema",
+    "themeLight": "Chiaro",
+    "themeDark": "Scuro",
+    "themeSystem": "Sistema",
+    "language": "Lingua"
+  },
+  "list": {
+    "search": "Cerca gioco...",
+    "searchPlaceholder": "Titolo, genere o piattaforma",
+    "filters": "Filtri",
+    "add": "Aggiungi",
+    "count": "{{ count }} giochi",
+    "empty": "Nessun gioco trovato.",
+    "emptySearch": "Nessun risultato per \"{{ query }}\"."
+  },
+  "table": {
+    "title": "Titolo",
+    "genre": "Genere",
+    "platform": "Piattaforma",
+    "releaseDate": "Anno",
+    "rating": "Voto",
+    "actions": ""
+  },
+  "form": {
+    "titleAdd": "Nuovo gioco",
+    "titleEdit": "Modifica gioco",
+    "title": "Titolo",
+    "genre": "Genere",
+    "platform": "Piattaforma",
+    "releaseDate": "Anno di uscita",
+    "rating": "Voto",
+    "image": "URL immagine",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "add": "Aggiungi",
+    "required": "Campo obbligatorio"
+  },
+  "actions": {
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "confirmDelete": "Eliminare \"{{ title }}\"?"
+  },
+  "errors": {
+    "loadFailed": "Errore nel caricamento dei giochi.",
+    "addFailed": "Errore durante l'aggiunta.",
+    "editFailed": "Errore durante la modifica.",
+    "deleteFailed": "Errore durante l'eliminazione."
+  },
+  "success": {
+    "added": "Gioco aggiunto!",
+    "updated": "Gioco aggiornato!",
+    "deleted": "Gioco eliminato."
+  },
+  "auth": {
+    "login": "Accedi con Google",
+    "logout": "Esci"
+  },
+  "search": {
+    "advancedTitle": "Ricerca avanzata",
+    "platform": "Piattaforma",
+    "genre": "Genere",
+    "feature": "Caratteristiche",
+    "italianSupport": "Supporto italiano",
+    "vr": "VR",
+    "stateStefano": "Stato Stefano",
+    "stateErica": "Stato Erica",
+    "stateAlessandro": "Stato Alessandro",
+    "price": "Prezzo (€)",
+    "releaseYear": "Anno di pubblicazione",
+    "buyYear": "Anno di acquisto",
+    "all": "Tutti",
+    "yes": "Sì",
+    "no": "No",
+    "apply": "Applica",
+    "reset": "Reset"
+  }
+}

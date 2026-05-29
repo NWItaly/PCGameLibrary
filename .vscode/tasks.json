@@ -1,0 +1,95 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // {
+    //   "label": "Docker development - Start",
+    //   "type": "shell",
+    //   "command": "docker-compose",
+    //   "args": [
+    //     "-f",
+    //     "docker-compose.yaml",
+    //     "up",
+    //     "-d",
+    //     "esphome"
+    //   ],
+    //   "problemMatcher": []
+    // }
+    {
+      "label": "🐳 Docker - Avvia Docker Desktop",
+      "type": "shell",
+      "command": "Start-Process -FilePath 'C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe'",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🐳 Docker - Avvia container",
+      "type": "shell",
+      "command": "docker compose up",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "isBackground": true,
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "🐳 Docker - Ferma container",
+      "type": "shell",
+      "command": "docker compose down",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🐳 Docker - Aggiorna dipendenze (npm install)",
+      "type": "shell",
+      "command": "docker compose run --rm pc-game-library npm install",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "⚡ Angular - Avvia dev server",
+      "type": "shell",
+      "command": "npm start -- --host 0.0.0.0 --poll 500",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "isBackground": true
+    },
+    {
+      "label": "⚡ Angular - Installa dipendenze",
+      "type": "shell",
+      "command": "npm install",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    }
+  ]
+}

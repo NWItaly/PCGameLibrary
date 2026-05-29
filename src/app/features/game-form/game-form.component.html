@@ -1,0 +1,189 @@
+<!-- game-form.component.html -->
+<h2 mat-dialog-title>{{ isEditMode ? 'Modifica gioco' : 'Nuovo gioco' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-grid">
+
+    <!-- ── Titolo ──────────────────────────────────────────────────────────── -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Titolo</mat-label>
+      <input matInput formControlName="title" placeholder="Es. Cyberpunk 2077" />
+      @if (form.controls.title.hasError('required') && form.controls.title.touched) {
+        <mat-error>Il titolo è obbligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- ── Piattaforma ─────────────────────────────────────────────────────── -->
+    <mat-form-field appearance="outline">
+      <mat-label>Piattaforma</mat-label>
+      <mat-select formControlName="platform">
+        <mat-option value="">— Nessuna —</mat-option>
+        @for (p of platforms; track p) {
+          <mat-option [value]="p">{{ p }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- ── Prezzo ──────────────────────────────────────────────────────────── -->
+    <mat-form-field appearance="outline">
+      <mat-label>Prezzo (€)</mat-label>
+      <input matInput formControlName="price"
+             placeholder="Es. 29.99" inputmode="decimal" />
+    </mat-form-field>
+
+    <!-- ── Data acquisto ───────────────────────────────────────────────────── -->
+    <mat-form-field appearance="outline">
+      <mat-label>Data acquisto</mat-label>
+      <!-- [formControl] standalone: buyDateCtrl non fa parte del form group,
+           così matDatepickerParse non influenza form.invalid né il pulsante Salva -->
+      <input matInput [matDatepicker]="picker" [formControl]="buyDateCtrl" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <!-- startView="multi-year" è comodo per date storiche di acquisto -->
+      <mat-datepicker #picker startView="multi-year" />
+      @if (buyDateCtrl.hasError('matDatepickerParse')) {
+        <mat-error>Data non valida — usa il calendario o il formato gg/mm/aaaa</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- ── Steam ID + pulsante fetch ───────────────────────────────────────── -->
+    <div class="steam-row full-width">
+      <mat-form-field appearance="outline" class="steam-id-field">
+        <mat-label>Steam ID</mat-label>
+        <input matInput formControlName="steamId"
+               placeholder="Es. 1091500" inputmode="numeric" />
+      </mat-form-field>
+      <button mat-stroked-button type="button" class="steam-load-btn"
+              [disabled]="!form.controls.steamId.value"
+              (click)="loadFromSteam()">
+        <mat-icon>cloud_download</mat-icon>
+        Carica da Steam
+      </button>
+    </div>
+
+    <!-- ── Valutazione a stelle ────────────────────────────────────────────── -->
+    <div class="rating-row full-width">
+      <span class="rating-label">Valutazione</span>
+      <div class="stars">
+        @for (star of [1, 2, 3, 4, 5]; track star) {
+          <mat-icon
+            class="star-icon"
+            [class.star-filled]="currentRating >= star"
+            (click)="setRating(star)">
+            {{ currentRating >= star ? 'star' : 'star_border' }}
+          </mat-icon>
+        }
+        @if (currentRating > 0) {
+          <button mat-icon-button type="button" class="clear-rating-btn"
+                  matTooltip="Rimuovi valutazione"
+                  (click)="clearRating()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- ── Stato giocatori (3 colonne) ────────────────────────────────────── -->
+    <div class="states-grid full-width">
+      <mat-form-field appearance="outline">
+        <mat-label>Stato Stefano</mat-label>
+        <mat-select formControlName="stateStefano">
+          @for (s of stateOptions; track s) {
+            <mat-option [value]="s">{{ s }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Stato Erica</mat-label>
+        <mat-select formControlName="stateErica">
+          @for (s of stateOptions; track s) {
+            <mat-option [value]="s">{{ s }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Stato Alessandro</mat-label>
+        <mat-select formControlName="stateAlessandro">
+          @for (s of stateOptions; track s) {
+            <mat-option [value]="s">{{ s }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- ── Sezione Steam — sola lettura, solo in modalità modifica ─────────── -->
+    @if (isEditMode) {
+      <div class="steam-section full-width">
+        <div class="section-title">
+          <mat-icon>sports_esports</mat-icon>
+          Dati Steam (sola lettura)
+        </div>
+
+        <!-- Copertina -->
+        @if (steamFields.image) {
+          <img class="steam-cover"
+               [src]="steamFields.image"
+               [alt]="'Cover ' + form.controls.title.value" />
+        }
+
+        <!-- Generi con chip -->
+        @if (steamFields.genres.length) {
+          <div class="chip-group">
+            <span class="chip-group-label">Generi</span>
+            <mat-chip-set>
+              @for (g of steamFields.genres; track g) {
+                <mat-chip>{{ g }}</mat-chip>
+              }
+            </mat-chip-set>
+          </div>
+        }
+
+        <!-- Feature con chip -->
+        @if (steamFields.features.length) {
+          <div class="chip-group">
+            <span class="chip-group-label">Feature</span>
+            <mat-chip-set>
+              @for (f of steamFields.features; track f) {
+                <mat-chip>{{ f }}</mat-chip>
+              }
+            </mat-chip-set>
+          </div>
+        }
+
+        <!-- Metadati testuali Steam -->
+        <div class="steam-meta">
+          @if (steamFields.italianSupport) {
+            <span class="meta-item">
+              <mat-icon>translate</mat-icon>
+              {{ steamFields.italianSupport }}
+            </span>
+          }
+          @if (steamFields.vR) {
+            <span class="meta-item">
+              <mat-icon>vrpano</mat-icon>
+              {{ steamFields.vR }}
+            </span>
+          }
+          @if (steamFields.releaseDate) {
+            <span class="meta-item">
+              <mat-icon>event</mat-icon>
+              {{ steamFields.releaseDate }}
+            </span>
+          }
+        </div>
+
+      </div>
+    }
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="dialogRef.close()">Annulla</button>
+  <button mat-flat-button color="primary" type="button"
+          [disabled]="form.invalid"
+          (click)="submit()">
+    {{ isEditMode ? 'Salva modifiche' : 'Aggiungi' }}
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,17 @@
+{
+  "name": "pc-games",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "pc-game-library",
+  "workspaceFolder": "/app",
+  "postCreateCommand": "npm install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "angular.ng-template",
+        "dbaeumer.vscode-eslint",
+        "spmeesseman.vscode-taskexplorer"
+      ]
+    }
+  },
+  "forwardPorts": [4200]
+}
