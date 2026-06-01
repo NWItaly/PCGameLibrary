@@ -5,7 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 // Mappa i valori esatti del foglio al nome del file SVG in assets/platforms/
 const PLATFORM_ICON_MAP: Record<string, string> = {
   'Steam': 'steam.svg',
-  'EpicGame': 'epicgames.svg',
+  'Epic Games': 'epicgames.svg',
   'GOG': 'gog.svg',
   'Origin/EA': 'ea.svg',
   'Ubisoft': 'ubisoft.svg',
@@ -13,10 +13,10 @@ const PLATFORM_ICON_MAP: Record<string, string> = {
   'Microsoft Store': 'microsoftstore.svg',
   'Xbox': 'xbox.svg',
   'Twitch': 'twitch.svg',
-  'LegacyGames': 'legacygames.svg',
-  'HumblePlay': 'humblebundle.svg',
+  'Legacy Games': 'legacygames.svg',
+  'Humble Play': 'humblebundle.svg',
   'Riot': 'riotgames.svg',
-  '__Battle.Net__': 'battlenet.svg',
+  'Battle.Net': 'battlenet.svg',
   // Icone custom (SVG generati localmente, non da simpleicons)
   'CD/DVD': 'disc.svg',
   'Download': 'download.svg',

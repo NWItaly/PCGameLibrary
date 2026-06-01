@@ -15,8 +15,8 @@ import { environment } from '../../../environments/environment';
 const BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
 
 /**
- * Range completo del foglio: da colonna A fino all'ultima (es. "Giochi!A:S").
- * String.fromCharCode(65 + 18) = 'S' → copre tutte le 19 colonne definite in SHEET_COLUMNS.
+ * Range completo del foglio usato per getGames() e addGame() (append).
+ * String.fromCharCode(65 + 18) = 'S' → copre tutte le 19 colonne (A:S).
  */
 const RANGE = `${environment.sheetName}!A:${String.fromCharCode(65 + SHEET_LASTCOLUMN)}`;
 
@@ -44,46 +44,60 @@ export class SheetsService {
   // ── READ ────────────────────────────────────────────────────────────────────
 
   getGames(): Observable<Game[]> {
+    // UNFORMATTED_VALUE restituisce i valori nativi della cella:
+    // - number per celle numeriche (prezzo, seriale data, rating smart chip, buyYear...)
+    // - string per testo (titolo, piattaforma, stati, url immagine...)
+    // FORMATTED_VALUE per la smart chip "Valutazione" restituisce il display visivo
+    // delle stelle (non un intero), causando parseInt → NaN → 0 stelle nel form.
     const url = `${BASE}/${this.spreadsheetId}/values/${RANGE}`
-      + `?valueRenderOption=FORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING`;
+      + `?valueRenderOption=UNFORMATTED_VALUE`;
 
-    const cleanPrice = (s: string): string =>
-      s?.replace(/[^0-9.,]/g, '').replace(',', '.').trim() ?? '';
+    // Converte qualsiasi valore cella in stringa sicura
+    const str = (v: any): string => (v == null ? '' : String(v));
 
-    const splitMapFilter = (s: string): string[] =>
-      s.split(',').map(p => p.trim()).filter(Boolean);
+    // Prezzo: number → "29.99"; stringa con simboli → "29.99" (retrocompatibilità)
+    const cleanPrice = (v: any): string => {
+      const s = str(v);
+      return s.replace(/[^0-9.,]/g, '').replace(',', '.').trim();
+    };
+
+    // Features/genres: testo "RPG, FPS" → ["RPG", "FPS"]
+    const splitMapFilter = (v: any): string[] =>
+      str(v).split(',').map((p: string) => p.trim()).filter(Boolean);
 
     return this.withValidToken(() =>
       this.http.get<any>(url, { headers: this.headers }).pipe(
         map((res) => {
-          const rows: string[][] = res.values ?? [];
+          const rows: any[][] = res.values ?? [];
           return rows.slice(1).map((row, i): Game => {
-            // Estende la riga a SHEET_COLUMN_COUNT (19) elementi con stringhe vuote,
-            // così ogni accesso per indice è sempre definito (inclusa la col. error = 18).
+            // Con UNFORMATTED_VALUE le celle vuote in coda sono omesse dall'API;
+            // ?? null per distinguere "cella assente" da "cella con valore 0"
             const r = Array.from(
               { length: SHEET_COLUMN_COUNT },
-              (_, idx) => row[idx] ?? ''
+              (_, idx) => row[idx] ?? null
             );
             return {
-              rowIndex:        i + 2,
-              id:              r[SHEET_COLUMNS.id] || `row-${i + 2}`,
-              title:           r[SHEET_COLUMNS.title],
-              platform:        r[SHEET_COLUMNS.platform],
-              price:           cleanPrice(r[SHEET_COLUMNS.price]),
-              buyDate:         r[SHEET_COLUMNS.buyDate],
-              buyYear:         r[SHEET_COLUMNS.buyYear],
-              steamId:         r[SHEET_COLUMNS.steamId],
-              features:        splitMapFilter(r[SHEET_COLUMNS.features]),
-              genres:          splitMapFilter(r[SHEET_COLUMNS.genres]),
-              italianSupport:  r[SHEET_COLUMNS.italianSupport],
-              vR:              r[SHEET_COLUMNS.vR],
-              releaseDate:     r[SHEET_COLUMNS.releaseDate],
-              stateStefano:    r[SHEET_COLUMNS.stateStefano],
-              stateErica:      r[SHEET_COLUMNS.stateErica],
-              stateAlessandro: r[SHEET_COLUMNS.stateAlessandro],
-              image:           r[SHEET_COLUMNS.imageUrl],  // col. 15 = URL copertina
-              rating:          r[SHEET_COLUMNS.rating],
-              error:           r[SHEET_COLUMNS.error],
+              rowIndex: i + 2,
+              id: str(r[SHEET_COLUMNS.id]) || `row-${i + 2}`,
+              title: str(r[SHEET_COLUMNS.title]),
+              platform: str(r[SHEET_COLUMNS.platform]),
+              price: cleanPrice(r[SHEET_COLUMNS.price]),
+              // buyDate: seriale numerico → "gg/mm/aaaa"; stringa preesistente → as-is
+              buyDate: this.fromSheetsSerial(r[SHEET_COLUMNS.buyDate]),
+              buyYear: str(r[SHEET_COLUMNS.buyYear]),
+              steamId: str(r[SHEET_COLUMNS.steamId]),
+              features: splitMapFilter(r[SHEET_COLUMNS.features]),
+              genres: splitMapFilter(r[SHEET_COLUMNS.genres]),
+              italianSupport: str(r[SHEET_COLUMNS.italianSupport]),
+              vR: str(r[SHEET_COLUMNS.vR]),
+              releaseDate: str(r[SHEET_COLUMNS.releaseDate]),
+              stateStefano: str(r[SHEET_COLUMNS.stateStefano]),
+              stateErica: str(r[SHEET_COLUMNS.stateErica]),
+              stateAlessandro: str(r[SHEET_COLUMNS.stateAlessandro]),
+              image: str(r[SHEET_COLUMNS.imageUrl]),
+              // rating: number 3 → "3"; garantisce parseInt corretto nel form
+              rating: str(r[SHEET_COLUMNS.rating]),
+              error: str(r[SHEET_COLUMNS.error]),
             };
           });
         })
@@ -93,41 +107,56 @@ export class SheetsService {
 
   // ── WRITE ───────────────────────────────────────────────────────────────────
 
+  /**
+   * Aggiunge un nuovo gioco al foglio in due passi:
+   * 1. Append di una riga con il solo id per ottenere il rowIndex assegnato da Sheets.
+   * 2. writeGameCells() per riempire tutte le colonne editabili di quella riga.
+   *
+   * Il doppio passaggio è necessario perché batchUpdate richiede un rowIndex noto,
+   * mentre append è l'unico endpoint che inserisce righe senza conoscerlo in anticipo.
+   */
   addGame(game: Omit<Game, 'rowIndex' | 'id'>): Observable<any> {
+    const id = crypto.randomUUID();
     const url = `${BASE}/${this.spreadsheetId}/values/${RANGE}`
       + `:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
 
-    const row = this.gameToRow({ ...game, id: crypto.randomUUID() });
-
     return this.withValidToken(() =>
-      this.http.post(url, { values: [row] }, { headers: this.headers })
+      this.http.post<any>(url, { values: [[id]] }, { headers: this.headers }).pipe(
+        switchMap(res => {
+          // updatedRange restituisce qualcosa come "Giochi!A100:A100"
+          const rowIndex = this.extractRowIndex(res.updates?.updatedRange);
+          if (!rowIndex) throw new Error('addGame: rowIndex non determinabile dalla risposta append');
+          return this.writeGameCells({ ...game, id }, rowIndex);
+        })
+      )
     );
   }
 
+  /**
+   * Aggiorna un gioco esistente sovrascrivendo solo le colonne editabili.
+   *
+   * Colonne NON toccate (intenzionalmente):
+   * - F  (buyYear, col. 5)  → calcolata da ARRAYFORMULA sul foglio
+   * - H:P (features…imageUrl, col. 7-15) → popolate dalla procedura Steam
+   * - Q  (image, col. 16)   → formula =IMAGE(…) calcolata dal foglio
+   * - S  (error, col. 18)   → calcolata da ARRAYFORMULA sul foglio
+   */
   updateGame(game: Game): Observable<any> {
-    // Range completo della riga: da A a ultima colonna (es. A5:S5)
-    const lastCol = String.fromCharCode(65 + SHEET_LASTCOLUMN);
-    const range   = `${environment.sheetName}!A${game.rowIndex}:${lastCol}${game.rowIndex}`;
-    const url     = `${BASE}/${this.spreadsheetId}/values/${range}?valueInputOption=RAW`;
-
-    const row = this.gameToRow(game);
-
-    return this.withValidToken(() =>
-      this.http.put(url, { values: [row] }, { headers: this.headers })
-    );
+    if (!game.rowIndex) throw new Error('updateGame: rowIndex mancante');
+    return this.withValidToken(() => this.writeGameCells(game, game.rowIndex!));
   }
 
   deleteGame(rowIndex: number): Observable<any> {
     // deleteDimension shifta verso l'alto le righe successive (diversamente da clear)
-    const url  = `${BASE}/${this.spreadsheetId}:batchUpdate`;
+    const url = `${BASE}/${this.spreadsheetId}:batchUpdate`;
     const body = {
       requests: [{
         deleteDimension: {
           range: {
-            sheetId:    0,            // aggiorna con gid=XXXXX se il foglio non è il primo
-            dimension:  'ROWS',
+            sheetId: 0,            // aggiorna con gid=XXXXX se il foglio non è il primo
+            dimension: 'ROWS',
             startIndex: rowIndex - 1, // 0-based
-            endIndex:   rowIndex,
+            endIndex: rowIndex,
           },
         },
       }],
@@ -140,40 +169,147 @@ export class SheetsService {
   // ── HELPERS PRIVATI ─────────────────────────────────────────────────────────
 
   /**
-   * Serializza un Game (o GameFormData con id) in un array di 19 valori
-   * pronto per le Sheets API con valueInputOption=RAW.
+   * Scrive le colonne editabili di un gioco su una riga specifica tramite values:batchUpdate
+   * con range multipli e valueInputOption=USER_ENTERED.
    *
-   * Regole:
-   * - `features` e `genres` (string[]) → stringa "a, b, c" (splitMapFilter inverso)
-   * - `rating` → number intero, così Google Sheets lo riconosce come smart chip Valutazione
-   * - Colonne calcolate dal foglio (buyYear, image col.16, error) → '' vuoto.
+   * Range scritti (mappa esplicita colonna → lettera):
+   *   A  col 0  id
+   *   B  col 1  title
+   *   C  col 2  platform
+   *   D  col 3  price       → stringa numerica "29.99", USER_ENTERED la converte in number
+   *   E  col 4  buyDate     → formato ISO "aaaa-mm-gg", riconosciuto da Sheets in ogni locale
+   *   -- col 5  buyYear     → SALTATA: ARRAYFORMULA calcola ANNO(E) — scrivere '' la uccide
+   *   G  col 6  steamId
+   *   -- col 7-15 H:P       → SALTATE: dati Steam (features…imageUrl), popolati da loadFromSteam
+   *   -- col 16 Q           → SALTATA: formula =IMAGE(…) calcolata dal foglio
+   *   M  col 12 stateStefano
+   *   N  col 13 stateErica
+   *   O  col 14 stateAlessandro
+   *   R  col 17 rating      → stringa "1"-"5", USER_ENTERED la converte in number per smart chip
+   *   -- col 18 S           → SALTATA: formula errore calcolata dal foglio
+   *
+   * USER_ENTERED (invece di RAW) permette a Sheets di interpretare il tipo corretto:
+   * - "30.12" → numero,  "2024-12-30" → data,  "Non interessa" → testo
+   * Questo evita l'apostrofo visibile nella barra della formula per date e numeri.
    */
-  private gameToRow(game: Omit<Game, 'rowIndex'>): (string | number)[] {
-    const row: (string | number)[] = new Array(SHEET_COLUMN_COUNT).fill('');
+  private writeGameCells(
+    game: Omit<Game, 'rowIndex'>,
+    rowIndex: number
+  ): Observable<any> {
+    const s = environment.sheetName;
+    const r = rowIndex;
+    const url = `${BASE}/${this.spreadsheetId}/values:batchUpdate`;
 
-    row[SHEET_COLUMNS.id]              = game.id ?? '';
-    row[SHEET_COLUMNS.title]           = game.title;
-    row[SHEET_COLUMNS.platform]        = game.platform ?? '';
-    // Prezzo: float JS → salvato come numero in Sheets (RAW). Stringa "10" → testo → apostrofo '''10''' visibile.
-    const priceNum = parseFloat((game.price ?? '').replace(',', '.'));
-    row[SHEET_COLUMNS.price]           = isNaN(priceNum) ? '' : priceNum;
-    row[SHEET_COLUMNS.buyDate]         = game.buyDate ?? '';
-    // buyYear (col. 5): calcolato dal foglio → lasciato ''
-    row[SHEET_COLUMNS.steamId]         = game.steamId ?? '';
-    row[SHEET_COLUMNS.features]        = game.features?.join(', ') ?? '';
-    row[SHEET_COLUMNS.genres]          = game.genres?.join(', ') ?? '';
-    row[SHEET_COLUMNS.italianSupport]  = game.italianSupport ?? '';
-    row[SHEET_COLUMNS.vR]              = game.vR ?? '';
-    row[SHEET_COLUMNS.releaseDate]     = game.releaseDate ?? '';
-    row[SHEET_COLUMNS.stateStefano]    = game.stateStefano ?? 'Non interessa';
-    row[SHEET_COLUMNS.stateErica]      = game.stateErica ?? 'Non interessa';
-    row[SHEET_COLUMNS.stateAlessandro] = game.stateAlessandro ?? 'Non interessa';
-    row[SHEET_COLUMNS.imageUrl]        = game.image ?? '';  // col. 15 = URL copertina
-    // image (col. 16): formula =IMAGE(…) calcolata dal foglio → lasciato ''
-    // rating: number (non stringa) per la smart chip "Valutazione" di Google Sheets
-    row[SHEET_COLUMNS.rating]          = game.rating ? Number(game.rating) : '';
-    // error (col. 18): calcolato dal foglio → lasciato ''
+    const body = {
+      valueInputOption: 'USER_ENTERED',
+      data: [
+        // A-E: id, title, platform, price, buyDate
+        {
+          range: `${s}!A${r}:E${r}`,
+          values: [[
+            game.id ?? '',
+            game.title,
+            game.platform ?? '',
+            // Prezzo: JS number (non stringa) per evitare il parsing locale di USER_ENTERED.
+            // Con locale IT, la stringa "29.99" verrebbe letta come 2999 (il punto è
+            // separatore delle migliaia in italiano). Un JS number nel JSON bypassa questo.
+            this.toNumber(game.price),
+            // Data: formato ISO aaaa-mm-gg → riconosciuto da Sheets in qualsiasi locale del foglio.
+            // Con FORMATTED_VALUE in lettura viene restituita nel formato della colonna (es. "30/12/2024").
+            this.toISODate(game.buyDate),
+          ]],
+        },
+        // G: steamId — salta F (col 5 = buyYear, ARRAYFORMULA)
+        {
+          range: `${s}!G${r}`,
+          values: [[game.steamId ?? '']],
+        },
+        // M-O: stati giocatori — salta H:L (col 7-11 = dati Steam) e mantiene P (col 15 = imageUrl Steam)
+        {
+          range: `${s}!M${r}:O${r}`,
+          values: [[
+            game.stateStefano ?? 'Non interessa',
+            game.stateErica ?? 'Non interessa',
+            game.stateAlessandro ?? 'Non interessa',
+          ]],
+        },
+        // R: rating — salta Q (col 16 = formula IMAGE)
+        // JS number (non stringa) per lo stesso motivo del prezzo: bypassa il parsing locale.
+        {
+          range: `${s}!R${r}`,
+          values: [[this.toNumber(game.rating)]],
+        },
+        // S (col 18 = error): non viene mai scritta — ARRAYFORMULA calcolata dal foglio
+      ],
+    };
 
-    return row;
+    return this.http.post(url, body, { headers: this.headers });
+  }
+
+  /**
+   * Estrae il numero di riga dal range restituito dall'API Sheets.
+   * Esempio: "Giochi!A100:A100" → 100, "Giochi!A5" → 5
+   */
+  private extractRowIndex(updatedRange: string | undefined): number | null {
+    if (!updatedRange) return null;
+    const match = updatedRange.match(/[A-Z]+(\d+)/);
+    return match ? parseInt(match[1], 10) : null;
+  }
+
+  /**
+   * Converte un valore data letto con UNFORMATTED_VALUE in stringa "gg/mm/aaaa".
+   *
+   * - number: seriale Sheets (giorni da 30/12/1899) → converte in data italiana
+   * - string: data già testuale (righe pre-esistenti salvate come testo) → restituisce as-is
+   * - null/undefined/0/'': stringa vuota
+   *
+   * Usa Date.UTC per evitare shift da fuso orario nel calcolo.
+   */
+  private fromSheetsSerial(value: any): string {
+    if (!value) return '';
+    if (typeof value === 'number') {
+      const EPOCH = Date.UTC(1899, 11, 30);
+      const d = new Date(EPOCH + value * 86_400_000);
+      const day = String(d.getUTCDate()).padStart(2, '0');
+      const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const year = d.getUTCFullYear();
+      return `${day}/${month}/${year}`;
+    }
+    return String(value); // stringa preesistente (testo data già in formato gg/mm/aaaa)
+  }
+
+
+  /**
+   * Converte una stringa numerica in JS number per la scrittura via Sheets API.
+   *
+   * Con USER_ENTERED, passare un JS number (non una stringa) è essenziale per i fogli
+   * con locale IT: la stringa "29.99" verrebbe interpretata come 2999 (il punto è
+   * separatore delle migliaia in italiano), mentre il number 29.99 viene memorizzato
+   * direttamente senza alcun parsing locale.
+   * Restituisce '' (stringa vuota) se il valore non è un numero valido,
+   * così la cella viene lasciata vuota invece di contenere NaN o 0.
+   */
+  private toNumber(value: string | undefined): number | '' {
+    if (!value) return '';
+    const n = parseFloat(value.replace(',', '.'));
+    return isNaN(n) ? '' : n;
+  }
+
+  /**
+   * Converte una stringa gg/mm/aaaa nel formato ISO aaaa-mm-gg.
+   *
+   * Il formato ISO è l'unico riconosciuto da Sheets con USER_ENTERED in qualsiasi
+   * locale del foglio (IT, EN-US, ecc.), garantendo che la cella venga salvata come
+   * tipo "Data" senza apostrofo e senza dipendere dalla locale del foglio.
+   * Restituisce '' se la stringa non è nel formato atteso.
+   */
+  private toISODate(dateStr: string | undefined): string {
+    if (!dateStr) return '';
+    const [d, m, y] = dateStr.split('/').map(Number);
+    if (!d || !m || !y) return '';
+    // Padding a due cifre per rispettare il formato ISO 8601
+    const mm = String(m).padStart(2, '0');
+    const dd = String(d).padStart(2, '0');
+    return `${y}-${mm}-${dd}`;
   }
 }

@@ -32,15 +32,28 @@ export class GameCardComponent {
   readonly deleteClicked = output<Game>();
 
   // Estrae l'anno dalla data di rilascio (formato atteso: YYYY o DD/MM/YYYY)
-  get releaseYear(): string {
+  releaseYear(): string {
     const d = this.game().releaseDate;
     if (!d) return '';
     return d.length >= 4 ? d.substring(6, 10) : d;
   }
 
+  ratingStars(): string {
+    const r = this.game().rating;
+    if (!r || isNaN(parseFloat(r)) || parseFloat(r) <= 0 || parseFloat(r) > 5) return '';
+    const n = Math.round(parseFloat(r));
+    return '★'.repeat(n) + '☆'.repeat(5 - n);
+  }
+
+  prizeFormatted(): string {
+    const p = this.game().price;
+    if (!p || isNaN(parseFloat(p)) || parseFloat(p) <= 0) return '';
+    return parseFloat(p).toLocaleString(undefined, { style: 'currency', currency: 'EUR' });
+  }
+
   // Estrae l'URL dall'interno della formula =IMAGE("...")
   // Se il valore è già un URL diretto lo restituisce così com'è
-  get imageUrl(): string | null {
+  imageUrl(): string | null {
     const raw = this.game().image;
     if (!raw) return null;
     const match = raw.match(/=IMAGE\("([^"]+)"\)/i);

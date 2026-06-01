@@ -1,8 +1,8 @@
 <mat-card class="game-card">
   <!-- Immagine di copertina -->
   <div class="card-image-wrapper">
-    @if (imageUrl) {
-    <img mat-card-image [src]="imageUrl" [alt]="game().title" class="card-image" (error)="onImageError($event)" />
+    @if (this.game().image) {
+    <img mat-card-image [src]="imageUrl()" [alt]="game().title" class="card-image" (error)="onImageError($event)" />
     } @else {
     <div class="card-image-placeholder">
       <mat-icon>sports_esports</mat-icon>
@@ -21,25 +21,24 @@
       <app-platform-icon [platform]="game().platform!" />
       }
 
-      @if (releaseYear) {
-      <span class="meta-year">{{ releaseYear }}</span>
+      @if (this.game().releaseDate) {
+      <span class="meta-year">{{ releaseYear() }}</span>
       }
 
       @if (game().rating) {
       <span class="meta-rating">
-        <mat-icon class="rating-icon">star</mat-icon>
-        {{ game().rating }}
+        {{ ratingStars() }}
       </span>
       }
 
       @if (game().price) {
-      <span class="meta-price">{{ game().price }} €</span>
+      <span class="meta-price">{{ prizeFormatted() }}</span>
       }
     </div>
 
     <!-- Genere -->
     @if (game().genres) {
-    <span class="card-genre">{{ game().genres.join(',') }}</span>
+    <span class="card-genre">{{ game().genres.join(', ') }}</span>
     }
   </mat-card-content>
 
