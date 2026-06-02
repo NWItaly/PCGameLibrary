@@ -8,7 +8,9 @@ App Angular per gestire la lista dei tuoi giochi PC, con Google Sheets come data
 
 1. Vai su [console.cloud.google.com](https://console.cloud.google.com)
 2. Crea un nuovo progetto (es. `pc-game-library`)
-3. **API & Services → Library** → abilita **Google Sheets API**
+3. **API & Services → Library** → abilita:
+    - **Google Sheets API**
+    - **Apps Script API**
 4. **API & Services → Credentials → Create Credentials → OAuth 2.0 Client ID**
    - Application type: **Web application**
    - Authorized JavaScript origins:
@@ -25,6 +27,19 @@ TODO: Generazione di un template
 
 ---
 
+## Setup Apps Script
+
+1. Nuovo progetto (rinominalo)
+1. Impostazioni progetto
+    - Abilita *'Mostra il file manifest "appscript.json" nell'editor'*.
+    - Cambia progetto, specificando il numero Progetto di Google Cloud.
+1. Editor
+    - Crea il file e copia il contenuto di `steamProxy.gs`
+    - Copia il contenuto di `appscript.json`
+1. Esegui il deployment -> Nuovo deployment. Copia il Deployment ID nella variabile steamScriptId in `environment.ts`
+
+---
+
 ## Sviluppo locale con Docker
 
 Non serve installare Node.js sul PC. E' sufficiente Docker Desktop.
@@ -37,6 +52,7 @@ export const environment = {
   googleClientId: 'IL_TUO_CLIENT_ID.apps.googleusercontent.com',
   spreadsheetId: 'IL_TUO_SPREADSHEET_ID',
   sheetName: 'Sheet1',
+  steamScriptId: 'IL_TUO_DEPLOYMENT_ID'
 };
 ```
 

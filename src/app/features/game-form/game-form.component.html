@@ -33,7 +33,6 @@
     <!-- ── Data acquisto ───────────────────────────────────────────────────── -->
     <mat-form-field appearance="outline">
       <mat-label>Data acquisto</mat-label>
-      <!-- startView="multi-year" è comodo per date storiche di acquisto -->
       <input matInput [matDatepicker]="picker" formControlName="buyDate" />
       <mat-datepicker-toggle matIconSuffix [for]="picker" />
       <mat-datepicker #picker startView="multi-year" />
@@ -48,12 +47,24 @@
         <mat-label>Steam ID</mat-label>
         <input matInput formControlName="steamId" placeholder="Es. 1091500" inputmode="numeric" />
       </mat-form-field>
-      <button mat-stroked-button type="button" class="steam-load-btn" [disabled]="!form.controls.steamId.value"
-        (click)="loadFromSteam()">
+      <button mat-stroked-button type="button" class="steam-load-btn"
+        [disabled]="!form.controls.steamId.value || steamLoading()" (click)="loadFromSteam()">
+        @if (steamLoading()) {
+        <mat-spinner diameter="18" />
+        } @else {
         <mat-icon>cloud_download</mat-icon>
+        }
         Carica da Steam
       </button>
     </div>
+
+    <!-- ── Errore Steam ────────────────────────────────────────────────────── -->
+    @if (steamError()) {
+    <div class="steam-error full-width">
+      <mat-icon>error_outline</mat-icon>
+      {{ steamError() }}
+    </div>
+    }
 
     <!-- ── Valutazione a stelle ────────────────────────────────────────────── -->
     <div class="rating-row full-width">
@@ -103,8 +114,8 @@
       </mat-form-field>
     </div>
 
-    <!-- ── Sezione Steam — sola lettura, solo in modalità modifica ─────────── -->
-    @if (isEditMode) {
+    <!-- ── Sezione Steam — sola lettura, visibile dopo fetch o in modifica ── -->
+    @if (isEditMode || steamFields.image || steamFields.genres.length) {
     <div class="steam-section full-width">
       <div class="section-title">
         <mat-icon>sports_esports</mat-icon>
@@ -158,6 +169,12 @@
         <span class="meta-item">
           <mat-icon>event</mat-icon>
           {{ steamFields.releaseDate }}
+        </span>
+        }
+        @if (steamFields.requiredAge) {
+        <span class="meta-item">
+          <mat-icon>person</mat-icon>
+          Età minima: {{ steamFields.requiredAge }}
         </span>
         }
       </div>

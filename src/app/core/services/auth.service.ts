@@ -4,7 +4,11 @@ import { environment } from '../../../environments/environment';
 
 declare const google: any;
 
-const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+const SCOPES = [
+  'https://www.googleapis.com/auth/spreadsheets',
+  'https://www.googleapis.com/auth/script.external_request',
+].join(' ');
+
 const TOKEN_KEY = 'gis_access_token';
 const TOKEN_EXPIRY_KEY = 'gis_token_expiry';
 
@@ -46,7 +50,7 @@ export class AuthService {
   logout(): void {
     const token = this.accessToken();
     if (token) {
-      google.accounts.oauth2.revoke(token, () => {});
+      google.accounts.oauth2.revoke(token, () => { });
     }
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(TOKEN_EXPIRY_KEY);

@@ -1,5 +1,5 @@
 // game-form.component.ts
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -25,14 +25,12 @@ import {
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Game, GameFormData } from '../../core/models/game.model';
+import { SteamService } from '../../core/services/steam.service';
 
 /**
  * Adapter personalizzato che risolve il falso errore `matDatepickerParse` con locale it-IT.
- *
- * Il problema di NativeDateAdapter: format() produce "30/12/2024" tramite Intl,
- * ma parse() usa Date.parse() che non riconosce il formato gg/mm/aaaa → errore falso positivo.
- * La soluzione è fare l'override di parse() aggiungendo la gestione del formato italiano.
  */
 class ItalianDateAdapter extends NativeDateAdapter {
   override parse(value: string | number | null | undefined): Date | null {
@@ -95,6 +93,7 @@ export const STATE_OPTIONS = ['Non interessa', 'Da giocare', 'Giocato'] as const
     MatChipsModule,
     MatIconModule,
     MatTooltipModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
     // ItalianDateAdapter risolve il parse() di NativeDateAdapter con locale it-IT.
@@ -111,6 +110,7 @@ export class GameFormComponent {
   readonly data: Game | null = inject(MAT_DIALOG_DATA);
 
   private readonly fb = inject(FormBuilder);
+  private readonly steamService = inject(SteamService);
 
   /** Costanti esposte al template */
   readonly platforms = PLATFORMS;
@@ -128,6 +128,7 @@ export class GameFormComponent {
     vR: this.data?.vR ?? '',
     releaseDate: this.data?.releaseDate ?? '',
     image: this.data?.image ?? '',
+    requiredAge: '',  // non presente in Game: viene popolato solo da loadFromSteam()
   };
 
   /** True se il dialog è aperto in modalità modifica */
@@ -170,19 +171,41 @@ export class GameFormComponent {
   }
 
   /**
-   * Carica i metadati del gioco da Steam tramite steamId.
-   * Il codice di fetch verrà integrato qui quando disponibile.
-   * Aggiornare `steamFields` con i dati ricevuti dall'API Steam.
+   * Chiama il proxy Apps Script con lo steamId corrente.
+   * Aggiorna steamFields con i dati ricevuti; gestisce loading ed errori.
    */
   loadFromSteam(): void {
-    const steamId = this.form.controls.steamId.value;
+    const steamId = this.form.controls.steamId.value?.trim();
     if (!steamId) return;
-    // TODO: integrare il servizio Steam e aggiornare:
-    // this.steamFields = { features: [...], genres: [...], ... };
-    console.warn('[GameForm] Steam fetch non ancora implementato. ID:', steamId);
+
+    this.steamLoading.set(true);
+    this.steamError.set(null);
+
+    this.steamService.loadByAppId(steamId).subscribe({
+      next: (data) => {
+        this.steamFields = {
+          features: data.features,
+          genres: data.genres,
+          italianSupport: data.italianSupport,
+          vR: data.vR,
+          releaseDate: data.releaseDate,
+          image: data.image,
+          requiredAge: data.requiredAge,
+        };
+        this.steamLoading.set(false);
+      },
+      error: (err) => {
+        // HTTP 404 → appid non trovato; altri → errore generico
+        const msg = err.status === 404
+          ? `Nessun gioco trovato per Steam ID ${steamId}`
+          : `Errore durante il caricamento da Steam`;
+        this.steamError.set(msg);
+        this.steamLoading.set(false);
+        console.error('[GameForm] loadFromSteam:', err);
+      },
+    });
   }
 
-  /** Valida il form, costruisce il GameFormData e chiude il dialog */
   submit(): void {
     if (this.form.invalid) return;
 
@@ -198,7 +221,6 @@ export class GameFormComponent {
       stateErica: raw.stateErica,
       stateAlessandro: raw.stateAlessandro,
       rating: raw.rating,
-      // Campi Steam: vuoti in aggiunta, pre-popolati in modifica; aggiornati da loadFromSteam()
       features: this.steamFields.features,
       genres: this.steamFields.genres,
       italianSupport: this.steamFields.italianSupport,
