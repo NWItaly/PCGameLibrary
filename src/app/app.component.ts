@@ -11,6 +11,7 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from './core/services/auth.service';
 import { ThemeService } from './core/services/theme.service';
 import { GameListComponent } from './features/game-list/game-list.component';
+import { MatIconRegistry } from '@angular/material/icon';
 
 @Component({
   selector: 'app-root',
@@ -39,6 +40,10 @@ export class AppComponent implements OnInit {
 
   // Espone il tipo per il template
   readonly ThemeMode = { light: 'light', dark: 'dark', system: 'system' } as const;
+
+  constructor() {
+    inject(MatIconRegistry).setDefaultFontSetClass('material-symbols-outlined');
+  }
 
   ngOnInit(): void {
     this.auth.init();

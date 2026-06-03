@@ -66,4 +66,15 @@ export class GameCardComponent {
     img.style.display = 'none';
     img.parentElement?.classList.add('no-image');
   }
+
+  /**
+   * Restituisce il path del badge PEGI o null se non applicabile.
+   * I valori validi sono '3','7','12','16','18'; '0' e '' non mostrano badge.
+   */
+  pegiBadgeSrc(): string | null {
+    const age = this.game().requiredAge;
+    if (!age || age === '0') return null;
+    const valid = ['3', '7', '12', '16', '18'];
+    return valid.includes(age) ? `assets/pegi/pegi-${age}-50.svg` : null;
+  }
 }

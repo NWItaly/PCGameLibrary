@@ -8,7 +8,7 @@
       <mat-label>{{ 'search.platform' | transloco }}</mat-label>
       <mat-select formControlName="platforms" multiple>
         @for (p of data.options.platforms; track p) {
-          <mat-option [value]="p">{{ p }}</mat-option>
+        <mat-option [value]="p">{{ p }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -18,7 +18,7 @@
       <mat-label>{{ 'search.genre' | transloco }}</mat-label>
       <mat-select formControlName="genres" multiple>
         @for (g of data.options.genres; track g) {
-          <mat-option [value]="g">{{ g }}</mat-option>
+        <mat-option [value]="g">{{ g }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -28,7 +28,7 @@
       <mat-label>{{ 'search.feature' | transloco }}</mat-label>
       <mat-select formControlName="features" multiple>
         @for (f of data.options.features; track f) {
-          <mat-option [value]="f">{{ f }}</mat-option>
+        <mat-option [value]="f">{{ f }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -62,7 +62,7 @@
       <mat-label>{{ 'search.stateStefano' | transloco }}</mat-label>
       <mat-select formControlName="statesStefano" multiple>
         @for (s of data.options.statesStefano; track s) {
-          <mat-option [value]="s">{{ s }}</mat-option>
+        <mat-option [value]="s">{{ s }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -72,7 +72,7 @@
       <mat-label>{{ 'search.stateErica' | transloco }}</mat-label>
       <mat-select formControlName="statesErica" multiple>
         @for (s of data.options.statesErica; track s) {
-          <mat-option [value]="s">{{ s }}</mat-option>
+        <mat-option [value]="s">{{ s }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -82,7 +82,17 @@
       <mat-label>{{ 'search.stateAlessandro' | transloco }}</mat-label>
       <mat-select formControlName="statesAlessandro" multiple>
         @for (s of data.options.statesAlessandro; track s) {
-          <mat-option [value]="s">{{ s }}</mat-option>
+        <mat-option [value]="s">{{ s }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Età minima PEGI -->
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'search.requiredAge' | transloco }}</mat-label>
+      <mat-select formControlName="requiredAges" multiple>
+        @for (age of data.options.requiredAges; track age) {
+        <mat-option [value]="age">PEGI {{ age }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -109,7 +119,8 @@
         <span>{{ form.get('releaseYearMin')!.value }}</span>
         <span>{{ form.get('releaseYearMax')!.value }}</span>
       </div>
-      <mat-slider [min]="data.options.releaseYearMin" [max]="data.options.releaseYearMax" [step]="1" class="full-slider">
+      <mat-slider [min]="data.options.releaseYearMin" [max]="data.options.releaseYearMax" [step]="1"
+        class="full-slider">
         <input matSliderStartThumb formControlName="releaseYearMin" />
         <input matSliderEndThumb formControlName="releaseYearMax" />
       </mat-slider>

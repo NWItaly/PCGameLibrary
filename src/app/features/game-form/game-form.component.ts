@@ -79,6 +79,9 @@ export const PLATFORMS = [
 /** Valori possibili per lo stato di gioco per ciascun utente */
 export const STATE_OPTIONS = ['Non interessa', 'Da giocare', 'Giocato'] as const;
 
+/** Valori età minima PEGI (0 = nessun limite specificato) */
+export const PEGI_AGES = [0, 3, 7, 12, 16, 18] as const;
+
 @Component({
   selector: 'app-game-form',
   standalone: true,
@@ -115,6 +118,13 @@ export class GameFormComponent {
   /** Costanti esposte al template */
   readonly platforms = PLATFORMS;
   readonly stateOptions = STATE_OPTIONS;
+  readonly pegiAges = PEGI_AGES;
+
+  /** True mentre la chiamata al proxy Steam è in corso */
+  readonly steamLoading = signal(false);
+
+  /** Messaggio di errore Steam, null se nessun errore */
+  readonly steamError = signal<string | null>(null);
 
   /**
    * Snapshot dei campi gestiti da Steam (sola lettura nel form).
@@ -128,7 +138,6 @@ export class GameFormComponent {
     vR: this.data?.vR ?? '',
     releaseDate: this.data?.releaseDate ?? '',
     image: this.data?.image ?? '',
-    requiredAge: '',  // non presente in Game: viene popolato solo da loadFromSteam()
   };
 
   /** True se il dialog è aperto in modalità modifica */
@@ -153,6 +162,8 @@ export class GameFormComponent {
     stateAlessandro: [this.data?.stateAlessandro ?? 'Non interessa'],
     // Memorizzato come stringa "1"–"5"; il service lo scrive come number per la smart chip
     rating: [this.data?.rating ?? ''],
+    // Età minima PEGI: '' = non specificata, altrimenti '0'|'3'|'7'|'12'|'16'|'18'
+    requiredAge: [this.data?.requiredAge ?? ''],
   });
 
   /** Valore numerico della valutazione corrente (0 = non impostata) */
@@ -190,8 +201,9 @@ export class GameFormComponent {
           vR: data.vR,
           releaseDate: data.releaseDate,
           image: data.image,
-          requiredAge: data.requiredAge,
         };
+        // requiredAge va nel form (editabile), non in steamFields
+        this.form.controls.requiredAge.setValue(data.requiredAge ?? '');
         this.steamLoading.set(false);
       },
       error: (err) => {
@@ -221,6 +233,7 @@ export class GameFormComponent {
       stateErica: raw.stateErica,
       stateAlessandro: raw.stateAlessandro,
       rating: raw.rating,
+      requiredAge: raw.requiredAge,
       features: this.steamFields.features,
       genres: this.steamFields.genres,
       italianSupport: this.steamFields.italianSupport,

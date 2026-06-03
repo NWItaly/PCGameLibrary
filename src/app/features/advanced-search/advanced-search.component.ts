@@ -20,6 +20,7 @@ export interface AdvancedSearchData {
     statesStefano: string[];
     statesErica: string[];
     statesAlessandro: string[];
+    requiredAges: number[];
     priceMin: number;
     priceMax: number;
     releaseYearMin: number;
@@ -65,6 +66,7 @@ export class AdvancedSearchComponent implements OnInit {
       statesAlessandro: [f.statesAlessandro],
       italianSupport: [f.italianSupport],
       vr: [f.vr],
+      requiredAges: [f.requiredAges],
       priceMin: [f.priceMin],
       priceMax: [f.priceMax],
       releaseYearMin: [f.releaseYearMin],
@@ -88,6 +90,7 @@ export class AdvancedSearchComponent implements OnInit {
       statesAlessandro: [],
       italianSupport: null,
       vr: null,
+      requiredAges: [],
       priceMin: this.data.options.priceMin,
       priceMax: this.data.options.priceMax,
       releaseYearMin: this.data.options.releaseYearMin,

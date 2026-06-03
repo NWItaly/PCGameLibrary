@@ -26,6 +26,9 @@ export interface GameFilters {
   // Slider range anno acquisto
   buyYearMin: number;
   buyYearMax: number;
+
+  // Filtro età minima PEGI — array vuoto = nessun filtro
+  requiredAges: number[];
 }
 
 // Valori di default — nessun filtro attivo
@@ -45,6 +48,7 @@ export const DEFAULT_FILTERS: GameFilters = {
   releaseYearMax: new Date().getFullYear(),
   buyYearMin: 2000,
   buyYearMax: new Date().getFullYear(),
+  requiredAges: [],
 };
 
 // Conta quanti filtri avanzati sono attivi (esclude query)
@@ -61,5 +65,6 @@ export function countActiveFilters(f: GameFilters, defaults: GameFilters): numbe
   if (f.priceMax > 0 && (f.priceMin > defaults.priceMin || f.priceMax < defaults.priceMax)) count++;
   if (f.releaseYearMin > defaults.releaseYearMin || f.releaseYearMax < defaults.releaseYearMax) count++;
   if (f.buyYearMin > defaults.buyYearMin || f.buyYearMax < defaults.buyYearMax) count++;
+  if (f.requiredAges.length) count++;
   return count;
 }

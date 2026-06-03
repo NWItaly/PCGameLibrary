@@ -5,7 +5,6 @@ import { from, Observable, map, switchMap } from 'rxjs';
 import { AuthService } from './auth.service';
 import {
   Game,
-  GameFormData,
   SHEET_COLUMNS,
   SHEET_LASTCOLUMN,
   SHEET_COLUMN_COUNT,
@@ -98,6 +97,7 @@ export class SheetsService {
               // rating: number 3 → "3"; garantisce parseInt corretto nel form
               rating: str(r[SHEET_COLUMNS.rating]),
               error: str(r[SHEET_COLUMNS.error]),
+              requiredAge: str(r[SHEET_COLUMNS.requiredAge]),
             };
           });
         })
@@ -240,6 +240,10 @@ export class SheetsService {
           values: [[this.toNumber(game.rating)]],
         },
         // S (col 18 = error): non viene mai scritta — ARRAYFORMULA calcolata dal foglio
+        {
+          range: `${s}!T${r}`,
+          values: [[this.toNumber(game.requiredAge)]],
+        },
       ],
     };
 

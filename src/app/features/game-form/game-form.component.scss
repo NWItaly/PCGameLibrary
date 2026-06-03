@@ -119,11 +119,19 @@
     }
   }
 
+  // Riga copertina + metadati affiancati
+  .steam-cover-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
   .steam-cover {
     display: block;
-    max-width: 184px;       // Dimensione standard header capsule Steam
+    width: 184px; // Dimensione fissa: header capsule Steam 460×215 → metà
+    flex-shrink: 0;
     border-radius: 6px;
-    margin-bottom: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
@@ -140,22 +148,24 @@
 
   .steam-meta {
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px 24px;
-    margin-top: 8px;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 2px;
 
     .meta-item {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
       font-size: 13px;
       color: var(--mat-card-subtitle-text-color, rgba(0, 0, 0, 0.72));
+      cursor: default;
 
       mat-icon {
-        font-size: 15px;
-        width: 15px;
-        height: 15px;
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
         color: var(--mat-icon-color, rgba(0, 0, 0, 0.54));
+        flex-shrink: 0;
       }
     }
   }

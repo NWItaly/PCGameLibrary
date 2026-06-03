@@ -17,14 +17,10 @@ export interface Game {
   stateStefano?: string;
   stateErica?: string;
   stateAlessandro?: string;
-  /**
-   * URL dell'immagine di copertina (col. 15 = imageUrl).
-   * La colonna 16 (image) contiene la formula =IMAGE(…) calcolata dal foglio
-   * e non viene mai letta né scritta dall'app.
-   */
-  image?: string;
+  image?: string;          // URL copertina (col. 15 = imageUrl) — non scrivere direttamente in col. 16 = image
   rating?: string;         // stringa "1"–"5" nel model; scritta come numero nelle API
   error?: string;          // calcolata dal foglio — non scrivere
+  requiredAge?: string;    // età minima
 }
 
 /** Dati del form: tutto tranne rowIndex; id opzionale (assente in aggiunta) */
@@ -54,6 +50,7 @@ export const SHEET_COLUMNS = {
   image: 16,               // formula =IMAGE(…) calcolata dal foglio
   rating: 17,
   error: 18,               // calcolata dal foglio
+  requiredAge: 19,         // età minima
 } as const;
 
 /**
@@ -61,14 +58,14 @@ export const SHEET_COLUMNS = {
  * Usato per costruire il range "A:S" nelle API Sheets:
  *   String.fromCharCode(65 + SHEET_LASTCOLUMN) → 'S'
  */
-export const SHEET_LASTCOLUMN = Object.keys(SHEET_COLUMNS).length - 1; // = 18
+export const SHEET_LASTCOLUMN = Object.keys(SHEET_COLUMNS).length - 1; // = 19
 
 /**
  * Numero totale di colonne (= SHEET_LASTCOLUMN + 1).
- * Usato per Array.from() in getGames(): serve un array di 19 elementi (0-18),
- * non 18 — altrimenti la colonna `error` (indice 18) risulterebbe undefined.
+ * Usato per Array.from() in getGames(): serve un array di 20 elementi (0-19),
+ * non 19 — altrimenti la colonna `error` (indice 18) risulterebbe undefined.
  */
-export const SHEET_COLUMN_COUNT = Object.keys(SHEET_COLUMNS).length; // = 19
+export const SHEET_COLUMN_COUNT = Object.keys(SHEET_COLUMNS).length; // = 20
 
 /** Restituisce il valore trimmato della cella o stringa vuota se assente */
 export type SheetRow = string[];

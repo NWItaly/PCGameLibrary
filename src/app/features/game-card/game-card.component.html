@@ -8,6 +8,9 @@
       <mat-icon>sports_esports</mat-icon>
     </div>
     }
+    @if (pegiBadgeSrc()) {
+    <img class="pegi-badge" [src]="pegiBadgeSrc()!" [alt]="'PEGI ' + game().requiredAge" />
+    }
   </div>
 
   <mat-card-content class="card-content">

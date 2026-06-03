@@ -102,6 +102,11 @@ export class FilterService {
         if (val !== (f.vr ? 'sì' : 'no')) return false;
       }
 
+      // Età richiesta — valore mancante trattato come 0
+      const age = g.requiredAge ? parseInt(g.requiredAge, 10) : 0;
+      if (f.requiredAges.length && !f.requiredAges.includes(age))
+        return false;
+
       // Prezzo — valore mancante trattato come 0
       const price = g.price
         ? parseFloat(g.price.replace(',', '.').replace('€', '').trim())
@@ -141,6 +146,7 @@ export class FilterService {
     statesStefano: string[];
     statesErica: string[];
     statesAlessandro: string[];
+    requiredAges: number[];
     priceMin: number;
     priceMax: number;
     releaseYearMin: number;
@@ -170,6 +176,7 @@ export class FilterService {
       statesStefano: distinct(games.map((g) => g.stateStefano)),
       statesErica: distinct(games.map((g) => g.stateErica)),
       statesAlessandro: distinct(games.map((g) => g.stateAlessandro)),
+      requiredAges: [3, 7, 12, 16, 18], // Valori standard PEGI
       priceMin: prices.length ? Math.floor(Math.min(...prices)) : 0,
       priceMax: prices.length ? Math.ceil(Math.max(...prices)) : 0,
       releaseYearMin: releaseYears.length ? Math.min(...releaseYears) : 1980,
