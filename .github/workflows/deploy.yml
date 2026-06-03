@@ -19,6 +19,7 @@ jobs:
         run: |
           sed -i "s|PLACEHOLDER_CLIENT_ID|${{ secrets.GOOGLE_CLIENT_ID }}|g" src/environments/environment.prod.ts
           sed -i "s|PLACEHOLDER_SPREADSHEET_ID|${{ secrets.SPREADSHEET_ID }}|g" src/environments/environment.prod.ts
+          sed -i "s|PLACEHOLDER_SHEET_NAME|${{ secrets.SHEET_NAME }}|g" src/environments/environment.prod.ts
           sed -i "s|PLACEHOLDER_STEAM_SCRIPT_ID|${{ secrets.STEAM_SCRIPT_ID }}|g" src/environments/environment.prod.ts
 
       - name: Setup Node.js

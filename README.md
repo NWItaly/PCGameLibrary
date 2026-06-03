@@ -84,6 +84,7 @@ Nel repository GitHub → **Settings → Secrets and variables → Actions → N
 |------|--------|
 | `GOOGLE_CLIENT_ID` | Il tuo Client ID OAuth |
 | `SPREADSHEET_ID` | L'ID del tuo foglio Google |
+| `SHEET_NAME` | Il nome foglio su Spreadsheet |
 | `STEAM_SCRIPT_ID` | L'ID dello App Script API |
 
 Il workflow `.github/workflows/deploy.yml` inietta i secrets nel build e pubblica su `gh-pages`.
