@@ -99,7 +99,7 @@
         <td mat-cell *matCellDef="let game" class="actions-cell">
           @if (game.steamId) {
           <a [href]="'https://store.steampowered.com/app/' + game.steamId" target="_blank" rel="noopener noreferrer"
-            mat-icon-button matTooltip="Steam" (click)="$event.stopPropagation()">
+            mat-icon-button [matTooltip]="'actions.steam' | transloco" (click)="$event.stopPropagation()">
             <mat-icon>open_in_new</mat-icon>
           </a>
           }

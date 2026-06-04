@@ -58,8 +58,8 @@
           (change)="setLanguage($event.value)"
           class="toggle-group"
         >
-          <mat-button-toggle value="it">🇮🇹 Italiano</mat-button-toggle>
-          <mat-button-toggle value="en">🇬🇧 English</mat-button-toggle>
+          <mat-button-toggle value="it">🇮🇹 {{ 'language.italian' | transloco }}</mat-button-toggle>
+          <mat-button-toggle value="en">🇬🇧 {{ 'language.english' | transloco }}</mat-button-toggle>
         </mat-button-toggle-group>
       </div>
 
@@ -81,7 +81,7 @@
 
     <!-- Toolbar -->
     <mat-toolbar color="primary" class="app-toolbar">
-      <button mat-icon-button (click)="sidenav.toggle()" aria-label="Menu">
+      <button mat-icon-button (click)="sidenav.toggle()" [attr.aria-label]="'nav.menu' | transloco">
         <mat-icon>menu</mat-icon>
       </button>
       <mat-icon class="logo-icon">sports_esports</mat-icon>

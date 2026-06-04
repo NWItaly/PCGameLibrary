@@ -1,7 +1,8 @@
 {
   "nav": {
     "title": "Game Library",
-    "privacy": "Privacy Policy"
+    "privacy": "Privacy Policy",
+    "menu": "Menu"
   },
   "sidenav": {
     "view": "View",
@@ -41,11 +42,29 @@
     "titleAdd": "New game",
     "titleEdit": "Edit game",
     "title": "Title",
+    "titlePlaceholder": "e.g. Cyberpunk 2077",
     "genre": "Genre",
     "platform": "Platform",
-    "releaseDate": "Release year",
+    "price": "Price (€)",
+    "pricePlaceholder": "e.g. 29.99",
+    "buyDate": "Purchase date",
+    "invalidDate": "Invalid date — use the calendar or dd/mm/yyyy",
+    "steamId": "Steam ID",
+    "steamIdPlaceholder": "e.g. 1091500",
+    "loadFromSteam": "Load from Steam",
     "rating": "Rating",
-    "image": "Image URL",
+    "clearRating": "Remove rating",
+    "requiredAgeLabel": "Minimum age (PEGI)",
+    "notSpecified": "— Not specified —",
+    "pegiAll": "All (PEGI 3)",
+    "pegiLabel": "PEGI {{ age }}",
+    "steamDataReadOnly": "Steam data (read only)",
+    "cover": "Cover",
+    "italianSupportTooltip": "Italian language: {{ value }}",
+    "vrSupportTooltip": "VR support: {{ value }}",
+    "releaseDateTooltip": "Release date",
+    "genres": "Genres",
+    "features": "Features",
     "cancel": "Cancel",
     "save": "Save",
     "add": "Add",
@@ -54,13 +73,16 @@
   "actions": {
     "edit": "Edit",
     "delete": "Delete",
+    "steam": "Steam",
     "confirmDelete": "Delete \"{{ title }}\"?"
   },
   "errors": {
     "loadFailed": "Error loading games.",
     "addFailed": "Error while adding.",
     "editFailed": "Error while editing.",
-    "deleteFailed": "Error while deleting."
+    "deleteFailed": "Error while deleting.",
+    "steamNotFound": "No game found for Steam ID {{ steamId }}.",
+    "steamLoadFailed": "Error loading data from Steam."
   },
   "success": {
     "added": "Game added!",
@@ -70,6 +92,10 @@
   "auth": {
     "login": "Sign in with Google",
     "logout": "Sign out"
+  },
+  "language": {
+    "italian": "Italian",
+    "english": "English"
   },
   "search": {
     "advancedTitle": "Advanced search",
@@ -90,5 +116,23 @@
     "no": "No",
     "apply": "Apply",
     "reset": "Reset"
+  }
+  ,
+  "privacy": {
+    "title": "Privacy Policy",
+    "introTitle": "Introduction",
+    "intro": "This notice explains how personal data is collected, used and protected in the Game Library application.",
+    "dataCollectedTitle": "Data we collect",
+    "dataCollected": "We may collect authentication information from Google, item identifiers (e.g. Steam ID) and data the user enters into the library.",
+    "useTitle": "How we use data",
+    "use": "Data is used only to manage the personal library, sync games and provide app features. We do not sell user data to third parties.",
+    "cookiesTitle": "Cookies & tracking",
+    "cookies": "The application uses technical cookies and, optionally, external services (e.g. Google) for authentication. No analytics tracking is enabled by default.",
+    "thirdPartiesTitle": "Third-party services",
+    "thirdParties": "Some external services (Google Sign-In, Steam) may receive limited data to perform their functions. Please review their privacy policies.",
+    "securityTitle": "Security",
+    "security": "We take reasonable measures to protect data. However no system is fully secure; users should avoid entering sensitive personal information.",
+    "contactTitle": "Contact",
+    "contact": "For privacy questions contact the project maintainer via the repository or the address in the README."
   }
 }

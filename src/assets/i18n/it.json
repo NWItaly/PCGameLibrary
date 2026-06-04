@@ -1,7 +1,8 @@
 {
   "nav": {
     "title": "Libreria Giochi",
-    "privacy": "Privacy Policy"
+    "privacy": "Privacy Policy",
+    "menu": "Menu"
   },
   "sidenav": {
     "view": "Visualizzazione",
@@ -41,11 +42,29 @@
     "titleAdd": "Nuovo gioco",
     "titleEdit": "Modifica gioco",
     "title": "Titolo",
+    "titlePlaceholder": "Es. Cyberpunk 2077",
     "genre": "Genere",
     "platform": "Piattaforma",
-    "releaseDate": "Anno di uscita",
+    "price": "Prezzo (€)",
+    "pricePlaceholder": "Es. 29.99",
+    "buyDate": "Data acquisto",
+    "invalidDate": "Data non valida — usa il calendario o il formato gg/mm/aaaa",
+    "steamId": "Steam ID",
+    "steamIdPlaceholder": "Es. 1091500",
+    "loadFromSteam": "Carica da Steam",
     "rating": "Voto",
-    "image": "URL immagine",
+    "clearRating": "Rimuovi valutazione",
+    "requiredAgeLabel": "Età minima (PEGI)",
+    "notSpecified": "— Non specificata —",
+    "pegiAll": "Tutti (PEGI 3)",
+    "pegiLabel": "PEGI {{ age }}",
+    "steamDataReadOnly": "Dati Steam (sola lettura)",
+    "cover": "Copertina",
+    "italianSupportTooltip": "Lingua italiana: {{ value }}",
+    "vrSupportTooltip": "Supporto VR: {{ value }}",
+    "releaseDateTooltip": "Data di rilascio",
+    "genres": "Generi",
+    "features": "Feature",
     "cancel": "Annulla",
     "save": "Salva",
     "add": "Aggiungi",
@@ -54,13 +73,16 @@
   "actions": {
     "edit": "Modifica",
     "delete": "Elimina",
+    "steam": "Steam",
     "confirmDelete": "Eliminare \"{{ title }}\"?"
   },
   "errors": {
     "loadFailed": "Errore nel caricamento dei giochi.",
     "addFailed": "Errore durante l'aggiunta.",
     "editFailed": "Errore durante la modifica.",
-    "deleteFailed": "Errore durante l'eliminazione."
+    "deleteFailed": "Errore durante l'eliminazione.",
+    "steamNotFound": "Nessun gioco trovato per Steam ID {{ steamId }}.",
+    "steamLoadFailed": "Errore durante il caricamento da Steam."
   },
   "success": {
     "added": "Gioco aggiunto!",
@@ -70,6 +92,10 @@
   "auth": {
     "login": "Accedi con Google",
     "logout": "Esci"
+  },
+  "language": {
+    "italian": "Italiano",
+    "english": "Inglese"
   },
   "search": {
     "advancedTitle": "Ricerca avanzata",
@@ -90,5 +116,23 @@
     "no": "No",
     "apply": "Applica",
     "reset": "Reset"
+  }
+  ,
+  "privacy": {
+    "title": "Privacy Policy",
+    "introTitle": "Introduzione",
+    "intro": "Questa informativa descrive come vengono raccolti, usati e protetti i dati personali nell'applicazione Libreria Giochi.",
+    "dataCollectedTitle": "Dati raccolti",
+    "dataCollected": "Potremmo raccogliere informazioni di autenticazione fornite da Google, identificatori degli elementi (es. Steam ID) e dati che l'utente inserisce manualmente nella libreria.",
+    "useTitle": "Come usiamo i dati",
+    "use": "I dati sono utilizzati esclusivamente per gestire la libreria personale, sincronizzare i giochi e fornire funzionalità dell'app. Non vendiamo i dati a terzi.",
+    "cookiesTitle": "Cookie e tracciamento",
+    "cookies": "L'applicazione utilizza cookie tecnici e, opzionalmente, servizi esterni (es. Google) per l'autenticazione. Nessun tracciamento analitico è attivato di default.",
+    "thirdPartiesTitle": "Servizi di terze parti",
+    "thirdParties": "Alcuni servizi esterni (Google Sign-In, Steam) possono ricevere dati limitati per svolgere le loro funzioni. Si prega di consultare le rispettive privacy policy.",
+    "securityTitle": "Sicurezza",
+    "security": "Adottiamo misure ragionevoli per proteggere i dati. Tuttavia nessun sistema è completamente sicuro; l'utente è invitato a evitare di inserire dati sensibili.",
+    "contactTitle": "Contatti",
+    "contact": "Per domande sulla privacy, contattare lo sviluppatore tramite il repository del progetto o l'indirizzo indicato nel README."
   }
 }

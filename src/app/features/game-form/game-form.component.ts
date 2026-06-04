@@ -28,6 +28,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Game, GameFormData } from '../../core/models/game.model';
 import { SteamService } from '../../core/services/steam.service';
+import { TranslateService } from '../../core/services/translate.service';
 
 /**
  * Adapter personalizzato che risolve il falso errore `matDatepickerParse` con locale it-IT.
@@ -114,6 +115,7 @@ export class GameFormComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly steamService = inject(SteamService);
+  public readonly translate = inject(TranslateService);
 
   /** Costanti esposte al template */
   readonly platforms = PLATFORMS;
@@ -209,8 +211,8 @@ export class GameFormComponent {
       error: (err) => {
         // HTTP 404 → appid non trovato; altri → errore generico
         const msg = err.status === 404
-          ? `Nessun gioco trovato per Steam ID ${steamId}`
-          : `Errore durante il caricamento da Steam`;
+          ? this.translate.t('errors.steamNotFound', { steamId })
+          : this.translate.t('errors.steamLoadFailed');
         this.steamError.set(msg);
         this.steamLoading.set(false);
         console.error('[GameForm] loadFromSteam:', err);

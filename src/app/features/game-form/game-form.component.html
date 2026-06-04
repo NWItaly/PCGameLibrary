@@ -1,23 +1,23 @@
 <!-- game-form.component.html -->
-<h2 mat-dialog-title>{{ isEditMode ? 'Modifica gioco' : 'Nuovo gioco' }}</h2>
+<h2 mat-dialog-title>{{ isEditMode ? ('form.titleEdit' | transloco) : ('form.titleAdd' | transloco) }}</h2>
 
 <mat-dialog-content>
   <form [formGroup]="form" class="form-grid">
 
     <!-- ── Titolo ──────────────────────────────────────────────────────────── -->
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Titolo</mat-label>
-      <input matInput formControlName="title" placeholder="Es. Cyberpunk 2077" />
+      <mat-label>{{ 'form.title' | transloco }}</mat-label>
+      <input matInput formControlName="title" placeholder="{{ 'form.titlePlaceholder' | transloco }}" />
       @if (form.controls.title.hasError('required') && form.controls.title.touched) {
-      <mat-error>Il titolo è obbligatorio</mat-error>
+      <mat-error>{{ 'form.required' | transloco }}</mat-error>
       }
     </mat-form-field>
 
     <!-- ── Piattaforma ─────────────────────────────────────────────────────── -->
     <mat-form-field appearance="outline">
-      <mat-label>Piattaforma</mat-label>
+      <mat-label>{{ 'form.platform' | transloco }}</mat-label>
       <mat-select formControlName="platform">
-        <mat-option value="">— Nessuna —</mat-option>
+        <mat-option value="">{{ 'form.none' | transloco }}</mat-option>
         @for (p of platforms; track p) {
         <mat-option [value]="p">{{ p }}</mat-option>
         }
@@ -26,26 +26,26 @@
 
     <!-- ── Prezzo ──────────────────────────────────────────────────────────── -->
     <mat-form-field appearance="outline">
-      <mat-label>Prezzo (€)</mat-label>
-      <input matInput formControlName="price" placeholder="Es. 29.99" inputmode="decimal" />
+      <mat-label>{{ 'form.price' | transloco }}</mat-label>
+      <input matInput formControlName="price" placeholder="{{ 'form.pricePlaceholder' | transloco }}" inputmode="decimal" />
     </mat-form-field>
 
     <!-- ── Data acquisto ───────────────────────────────────────────────────── -->
     <mat-form-field appearance="outline">
-      <mat-label>Data acquisto</mat-label>
+      <mat-label>{{ 'form.buyDate' | transloco }}</mat-label>
       <input matInput [matDatepicker]="picker" formControlName="buyDate" />
       <mat-datepicker-toggle matIconSuffix [for]="picker" />
       <mat-datepicker #picker startView="multi-year" />
       @if (form.controls.buyDate.hasError('matDatepickerParse')) {
-      <mat-error>Data non valida — usa il calendario o il formato gg/mm/aaaa</mat-error>
+      <mat-error>{{ 'form.invalidDate' | transloco }}</mat-error>
       }
     </mat-form-field>
 
     <!-- ── Steam ID + pulsante fetch ───────────────────────────────────────── -->
     <div class="steam-row full-width">
       <mat-form-field appearance="outline" class="steam-id-field">
-        <mat-label>Steam ID</mat-label>
-        <input matInput formControlName="steamId" placeholder="Es. 1091500" inputmode="numeric" />
+        <mat-label>{{ 'form.steamId' | transloco }}</mat-label>
+        <input matInput formControlName="steamId" placeholder="{{ 'form.steamIdPlaceholder' | transloco }}" inputmode="numeric" />
       </mat-form-field>
       <button mat-stroked-button type="button" class="steam-load-btn"
         [disabled]="!form.controls.steamId.value || steamLoading()" (click)="loadFromSteam()">
@@ -54,7 +54,7 @@
         } @else {
         <mat-icon>cloud_download</mat-icon>
         }
-        Carica da Steam
+        {{ 'form.loadFromSteam' | transloco }}
       </button>
     </div>
 
@@ -68,7 +68,7 @@
 
     <!-- ── Valutazione a stelle ────────────────────────────────────────────── -->
     <div class="rating-row full-width">
-      <span class="rating-label">Valutazione</span>
+      <span class="rating-label">{{ 'form.rating' | transloco }}</span>
       <div class="stars">
         @for (star of [1, 2, 3, 4, 5]; track star) {
         <mat-icon class="star-icon" [class.star-filled]="currentRating >= star" (click)="setRating(star)">
@@ -76,7 +76,7 @@
         </mat-icon>
         }
         @if (currentRating > 0) {
-        <button mat-icon-button type="button" class="clear-rating-btn" matTooltip="Rimuovi valutazione"
+        <button mat-icon-button type="button" class="clear-rating-btn" [matTooltip]="'form.clearRating' | transloco"
           (click)="clearRating()">
           <mat-icon>close</mat-icon>
         </button>
@@ -86,12 +86,12 @@
 
     <!-- ── Età minima (PEGI) ───────────────────────────────────────────────── -->
     <mat-form-field appearance="outline">
-      <mat-label>Età minima (PEGI)</mat-label>
+      <mat-label>{{ 'form.requiredAgeLabel' | transloco }}</mat-label>
       <mat-select formControlName="requiredAge">
-        <mat-option value="">— Non specificata —</mat-option>
+        <mat-option value="">{{ 'form.notSpecified' | transloco }}</mat-option>
         @for (age of pegiAges; track age) {
         <mat-option [value]="age.toString()">
-          {{ age === 0 ? 'Tutti (PEGI 3)' : 'PEGI ' + age }}
+          {{ age === 0 ? ('form.pegiAll' | transloco) : ('form.pegiLabel' | transloco:{ age }) }}
         </mat-option>
         }
       </mat-select>
@@ -100,7 +100,7 @@
     <!-- ── Stato giocatori (3 colonne) ────────────────────────────────────── -->
     <div class="states-grid full-width">
       <mat-form-field appearance="outline">
-        <mat-label>Stato Stefano</mat-label>
+        <mat-label>{{ 'search.stateStefano' | transloco }}</mat-label>
         <mat-select formControlName="stateStefano">
           @for (s of stateOptions; track s) {
           <mat-option [value]="s">{{ s }}</mat-option>
@@ -109,7 +109,7 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Stato Erica</mat-label>
+        <mat-label>{{ 'search.stateErica' | transloco }}</mat-label>
         <mat-select formControlName="stateErica">
           @for (s of stateOptions; track s) {
           <mat-option [value]="s">{{ s }}</mat-option>
@@ -118,7 +118,7 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Stato Alessandro</mat-label>
+        <mat-label>{{ 'search.stateAlessandro' | transloco }}</mat-label>
         <mat-select formControlName="stateAlessandro">
           @for (s of stateOptions; track s) {
           <mat-option [value]="s">{{ s }}</mat-option>
@@ -132,29 +132,29 @@
     <div class="steam-section full-width">
       <div class="section-title">
         <mat-icon>sports_esports</mat-icon>
-        Dati Steam (sola lettura)
+        {{ 'form.steamDataReadOnly' | transloco }}
       </div>
 
       <!-- Copertina + metadati affiancati -->
       <div class="steam-cover-row">
         @if (steamFields.image) {
-        <img class="steam-cover" [src]="steamFields.image" [alt]="'Cover ' + form.controls.title.value" />
+        <img class="steam-cover" [src]="steamFields.image" [alt]="('form.cover' | transloco) + ' ' + form.controls.title.value" />
         }
         <div class="steam-meta">
           @if (steamFields.italianSupport) {
-          <span class="meta-item" [matTooltip]="'Lingua italiana: ' + steamFields.italianSupport">
+          <span class="meta-item" [matTooltip]="translate.t('form.italianSupportTooltip', { value: steamFields.italianSupport })">
             <mat-icon>translate</mat-icon>
             {{ steamFields.italianSupport }}
           </span>
           }
           @if (steamFields.vR) {
-          <span class="meta-item" [matTooltip]="'Supporto VR: ' + steamFields.vR">
+          <span class="meta-item" [matTooltip]="translate.t('form.vrSupportTooltip', { value: steamFields.vR })">
             <mat-icon>head_mounted_device</mat-icon>
             {{ steamFields.vR }}
           </span>
           }
           @if (steamFields.releaseDate) {
-          <span class="meta-item" matTooltip="Data di rilascio">
+          <span class="meta-item" [matTooltip]="'form.releaseDateTooltip' | transloco">
             <mat-icon>event</mat-icon>
             {{ steamFields.releaseDate }}
           </span>
@@ -165,7 +165,7 @@
       <!-- Generi con chip -->
       @if (steamFields.genres.length) {
       <div class="chip-group">
-        <span class="chip-group-label">Generi</span>
+        <span class="chip-group-label">{{ 'form.genres' | transloco }}</span>
         <mat-chip-set>
           @for (g of steamFields.genres; track g) {
           <mat-chip>{{ g }}</mat-chip>
@@ -177,7 +177,7 @@
       <!-- Feature con chip -->
       @if (steamFields.features.length) {
       <div class="chip-group">
-        <span class="chip-group-label">Feature</span>
+        <span class="chip-group-label">{{ 'form.features' | transloco }}</span>
         <mat-chip-set>
           @for (f of steamFields.features; track f) {
           <mat-chip>{{ f }}</mat-chip>
@@ -193,8 +193,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button type="button" (click)="dialogRef.close()">Annulla</button>
+  <button mat-button type="button" (click)="dialogRef.close()">{{ 'form.cancel' | transloco }}</button>
   <button mat-flat-button color="primary" type="button" [disabled]="form.invalid" (click)="submit()">
-    {{ isEditMode ? 'Salva modifiche' : 'Aggiungi' }}
+    {{ isEditMode ? ('form.save' | transloco) : ('form.add' | transloco) }}
   </button>
 </mat-dialog-actions>

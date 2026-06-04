@@ -2,7 +2,8 @@
   <!-- Immagine di copertina -->
   <div class="card-image-wrapper">
     @if (this.game().image) {
-    <img mat-card-image [src]="imageUrl()" [alt]="game().title" class="card-image" (error)="onImageError($event)" />
+    <img mat-card-image [src]="imageUrl()" [alt]="game().title" class="card-image" loading="lazy"
+      (error)="onImageError($event)" />
     } @else {
     <div class="card-image-placeholder">
       <mat-icon>sports_esports</mat-icon>
@@ -49,7 +50,7 @@
   <mat-card-actions class="card-actions">
     @if (game().steamId) {
     <a [href]="'https://store.steampowered.com/app/' + game().steamId" target="_blank" rel="noopener noreferrer"
-      mat-icon-button [matTooltip]="'Steam'" (click)="$event.stopPropagation()">
+      mat-icon-button [matTooltip]="'actions.steam' | transloco" (click)="$event.stopPropagation()">
       <mat-icon>open_in_new</mat-icon>
     </a>
     }
