@@ -6,6 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { PlatformIconComponent } from '../../shared/components/platform-icon/platform-icon.component';
 import { Game } from '../../core/models/game.model';
 import { TranslateService } from '../../core/services/translate.service';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-game-card',
@@ -16,6 +17,8 @@ import { TranslateService } from '../../core/services/translate.service';
     MatButtonModule,
     MatTooltipModule,
     PlatformIconComponent,
+    TranslocoModule,
+    
   ],
   templateUrl: './game-card.component.html',
   styleUrl: './game-card.component.scss',

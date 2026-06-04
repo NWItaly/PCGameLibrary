@@ -10,7 +10,6 @@ import { RouterModule } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from './core/services/auth.service';
 import { ThemeService } from './core/services/theme.service';
-import { GameListComponent } from './features/game-list/game-list.component';
 import { MatIconRegistry } from '@angular/material/icon';
 
 @Component({
@@ -26,7 +25,6 @@ import { MatIconRegistry } from '@angular/material/icon';
     MatDividerModule,
     RouterModule,
     TranslocoModule,
-    GameListComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

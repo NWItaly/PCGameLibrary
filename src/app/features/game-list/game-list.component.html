@@ -26,6 +26,24 @@
       <mat-icon>{{ sortDir() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
     </button>
 
+    <!-- Vista -->
+    <div class="sidenav-section">
+      <mat-button-toggle-group
+        [value]="viewMode()"
+        (change)="setViewMode($event.value)"
+        class="toggle-group"
+      >
+        <mat-button-toggle value="card">
+          <mat-icon>grid_view</mat-icon>
+          {{ 'sidenav.viewCard' | transloco }}
+        </mat-button-toggle>
+        <mat-button-toggle value="table">
+          <mat-icon>table_rows</mat-icon>
+          {{ 'sidenav.viewTable' | transloco }}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
     <mat-menu #sortMenu="matMenu">
       @for (opt of sortOptions; track opt.field) {
       <button mat-menu-item (click)="setSort(opt.field)">

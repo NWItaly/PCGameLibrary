@@ -4,6 +4,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
@@ -39,6 +40,7 @@ export type SortDir = 'asc' | 'desc';
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatIconModule,
     MatMenuModule,
     MatProgressSpinnerModule,

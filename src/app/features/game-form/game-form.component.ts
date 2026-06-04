@@ -11,6 +11,7 @@ import {
   MAT_DIALOG_DATA,
   MatDialogModule,
 } from '@angular/material/dialog';
+import { TranslocoModule } from '@jsverse/transloco';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -98,6 +99,7 @@ export const PEGI_AGES = [0, 3, 7, 12, 16, 18] as const;
     MatIconModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
+    TranslocoModule,
   ],
   providers: [
     // ItalianDateAdapter risolve il parse() di NativeDateAdapter con locale it-IT.

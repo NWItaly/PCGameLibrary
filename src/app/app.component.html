@@ -4,35 +4,11 @@
   <mat-sidenav #sidenav mode="over" position="start" class="app-sidenav">
     <div class="sidenav-content">
 
-      <!-- Vista -->
-      <div class="sidenav-section">
-        <p class="sidenav-label">{{ 'sidenav.view' | transloco }}</p>
-        <mat-button-toggle-group
-          [value]="gameList.viewMode()"
-          (change)="gameList.setViewMode($event.value)"
-          class="toggle-group"
-        >
-          <mat-button-toggle value="card">
-            <mat-icon>grid_view</mat-icon>
-            {{ 'sidenav.viewCard' | transloco }}
-          </mat-button-toggle>
-          <mat-button-toggle value="table">
-            <mat-icon>table_rows</mat-icon>
-            {{ 'sidenav.viewTable' | transloco }}
-          </mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-
-      <mat-divider />
 
       <!-- Tema -->
       <div class="sidenav-section">
         <p class="sidenav-label">{{ 'sidenav.theme' | transloco }}</p>
-        <mat-button-toggle-group
-          [value]="theme.mode()"
-          (change)="theme.setMode($event.value)"
-          class="toggle-group"
-        >
+        <mat-button-toggle-group [value]="theme.mode()" (change)="theme.setMode($event.value)" class="toggle-group">
           <mat-button-toggle value="light">
             <mat-icon>light_mode</mat-icon>
             {{ 'sidenav.themeLight' | transloco }}
@@ -53,11 +29,7 @@
       <!-- Lingua -->
       <div class="sidenav-section">
         <p class="sidenav-label">{{ 'sidenav.language' | transloco }}</p>
-        <mat-button-toggle-group
-          [value]="activeLang"
-          (change)="setLanguage($event.value)"
-          class="toggle-group"
-        >
+        <mat-button-toggle-group [value]="activeLang" (change)="setLanguage($event.value)" class="toggle-group">
           <mat-button-toggle value="it">🇮🇹 {{ 'language.italian' | transloco }}</mat-button-toggle>
           <mat-button-toggle value="en">🇬🇧 {{ 'language.english' | transloco }}</mat-button-toggle>
         </mat-button-toggle-group>
@@ -88,19 +60,19 @@
       <span class="toolbar-title">{{ 'nav.title' | transloco }}</span>
       <span class="spacer"></span>
       @if (auth.isLoggedIn()) {
-        <button mat-stroked-button (click)="auth.logout()">
-          <mat-icon>logout</mat-icon> {{ 'auth.logout' | transloco }}
-        </button>
+      <button mat-stroked-button (click)="auth.logout()">
+        <mat-icon>logout</mat-icon> {{ 'auth.logout' | transloco }}
+      </button>
       } @else {
-        <button mat-stroked-button (click)="auth.login()">
-          <mat-icon>login</mat-icon> {{ 'auth.login' | transloco }}
-        </button>
+      <button mat-stroked-button (click)="auth.login()">
+        <mat-icon>login</mat-icon> {{ 'auth.login' | transloco }}
+      </button>
       }
     </mat-toolbar>
 
-    <!-- Lista giochi -->
+    <!-- Contenuto rotte -->
     <main class="app-content">
-      <app-game-list #gameList />
+      <router-outlet></router-outlet>
     </main>
 
   </mat-sidenav-content>
