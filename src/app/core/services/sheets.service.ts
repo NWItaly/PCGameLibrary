@@ -136,10 +136,9 @@ export class SheetsService {
    * Aggiorna un gioco esistente sovrascrivendo solo le colonne editabili.
    *
    * Colonne NON toccate (intenzionalmente):
-   * - F  (buyYear, col. 5)  → calcolata da ARRAYFORMULA sul foglio
-   * - H:P (features…imageUrl, col. 7-15) → popolate dalla procedura Steam
-   * - Q  (image, col. 16)   → formula =IMAGE(…) calcolata dal foglio
-   * - S  (error, col. 18)   → calcolata da ARRAYFORMULA sul foglio
+   * - F, col. 5: buyYear
+   * - Q, col. 16: =IMAGE(…)
+   * - S, col. 18: ARRAYFORMULA
    */
   updateGame(game: Game): Observable<any> {
     if (!game.rowIndex) throw new Error('updateGame: rowIndex mancante');
@@ -176,17 +175,23 @@ export class SheetsService {
    *   A  col 0  id
    *   B  col 1  title
    *   C  col 2  platform
-   *   D  col 3  price       → stringa numerica "29.99", USER_ENTERED la converte in number
-   *   E  col 4  buyDate     → formato ISO "aaaa-mm-gg", riconosciuto da Sheets in ogni locale
-   *   -- col 5  buyYear     → SALTATA: ARRAYFORMULA calcola ANNO(E) — scrivere '' la uccide
+   *   D  col 3  price          → stringa numerica "29.99", USER_ENTERED la converte in number
+   *   E  col 4  buyDate        → formato ISO "aaaa-mm-gg", riconosciuto da Sheets in ogni locale
+   *   -- col 5  buyYear        → SALTATA: ARRAYFORMULA calcola ANNO(E) — scrivere '' la uccide
    *   G  col 6  steamId
-   *   -- col 7-15 H:P       → SALTATE: dati Steam (features…imageUrl), popolati da loadFromSteam
-   *   -- col 16 Q           → SALTATA: formula =IMAGE(…) calcolata dal foglio
-   *   M  col 12 stateStefano
-   *   N  col 13 stateErica
-   *   O  col 14 stateAlessandro
-   *   R  col 17 rating      → stringa "1"-"5", USER_ENTERED la converte in number per smart chip
-   *   -- col 18 S           → SALTATA: formula errore calcolata dal foglio
+   *   H  col 7  features       → stringa "RPG, FPS"
+   *   I  col 8  genres         → stringa "RPG, FPS"
+   *   J  col 9  italianSupport → stringa "Sì"/"No"
+   *   K  col 10 vR             → stringa "Sì"/"No"/"Non interessa" 
+   *   L  col 11 releaseDate    → formato ISO "aaaa-mm-gg", riconosciuto da Sheets in ogni locale
+   *   M  col 14 stateStefano
+   *   N  col 15 stateErica
+   *   O  col 16 stateAlessandro
+   *   P  col 12 imageUrl       → URL copertina
+   *   -- col 13 image          → SALTATA: formula =IMAGE(…) calcolata dal foglio
+   *   R  col 17 rating         → stringa "1"-"5", USER_ENTERED la converte in number per smart chip
+   *   -- col 18 Errore         → SALTATA: formula errore calcolata dal foglio
+   *   T  col 19 requiredAge    → stringa numerica "18", USER_ENTERED la converte in number
    *
    * USER_ENTERED (invece di RAW) permette a Sheets di interpretare il tipo corretto:
    * - "30.12" → numero,  "2024-12-30" → data,  "Non interessa" → testo
@@ -219,27 +224,30 @@ export class SheetsService {
             this.toISODate(game.buyDate),
           ]],
         },
-        // G: steamId — salta F (col 5 = buyYear, ARRAYFORMULA)
+        // F: ARRAYFORMULA
+        // G-P: steamId, features, genres, italianSupport, vR, releaseDate, stati giocatori, imageUrl
         {
-          range: `${s}!G${r}`,
-          values: [[game.steamId ?? '']],
-        },
-        // M-O: stati giocatori — salta H:L (col 7-11 = dati Steam) e mantiene P (col 15 = imageUrl Steam)
-        {
-          range: `${s}!M${r}:O${r}`,
+          range: `${s}!G${r}:P${r}`,
           values: [[
+            game.steamId ?? '',
+            game.features.join(', '),
+            game.genres.join(', '),
+            game.italianSupport ?? '',
+            game.vR ?? 'Non interessa',
+            this.toISODate(game.releaseDate),
             game.stateStefano ?? 'Non interessa',
             game.stateErica ?? 'Non interessa',
             game.stateAlessandro ?? 'Non interessa',
+            game.image ?? '',
           ]],
         },
-        // R: rating — salta Q (col 16 = formula IMAGE)
-        // JS number (non stringa) per lo stesso motivo del prezzo: bypassa il parsing locale.
+        // Q: ARRAYFORMULA
+        // R: rating
         {
           range: `${s}!R${r}`,
           values: [[this.toNumber(game.rating)]],
         },
-        // S (col 18 = error): non viene mai scritta — ARRAYFORMULA calcolata dal foglio
+        // S: ARRAYFORMULA
         {
           range: `${s}!T${r}`,
           values: [[this.toNumber(game.requiredAge)]],

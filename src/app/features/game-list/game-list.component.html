@@ -1,5 +1,5 @@
 <div class="list-container">
-  <!-- Toolbar: ricerca rapida + filtri avanzati + aggiungi -->
+  <!-- Toolbar: ricerca rapida + filtri avanzati + ordinamento -->
   <div class="toolbar">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>{{ 'list.search' | transloco }}</mat-label>
@@ -19,11 +19,26 @@
       {{ 'list.filters' | transloco }}
     </button>
 
-    @if (auth.isLoggedIn()) {
-    <button mat-flat-button color="primary" (click)="openAddDialog()">
-      <mat-icon>add</mat-icon> {{ 'list.add' | transloco }}
+    <!-- Pulsante ordinamento: apre il menu; la freccia indica la direzione attiva -->
+    <button mat-stroked-button [matMenuTriggerFor]="sortMenu" [matTooltip]="activeSortLabel()">
+      <mat-icon>sort</mat-icon>
+      {{ 'list.sort' | transloco }}
+      <mat-icon>{{ sortDir() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
     </button>
-    }
+
+    <mat-menu #sortMenu="matMenu">
+      @for (opt of sortOptions; track opt.field) {
+      <button mat-menu-item (click)="setSort(opt.field)">
+        <!-- Segno di spunta sul campo attivo -->
+        @if (sortField() === opt.field) {
+        <mat-icon>{{ sortDir() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+        } @else {
+        <mat-icon></mat-icon>
+        }
+        {{ opt.labelKey | transloco }}
+      </button>
+      }
+    </mat-menu>
   </div>
 
   <!-- Spinner durante il caricamento -->
@@ -37,7 +52,7 @@
   <!-- Vista CARD -->
   @if (viewMode() === 'card') {
   <div class="card-grid">
-    @for (game of filteredGames(); track game.rowIndex) {
+    @for (game of sortedGames(); track game.rowIndex) {
     <app-game-card [game]="game" [canEdit]="auth.isLoggedIn()" (editClicked)="openEditDialog($event)"
       (deleteClicked)="deleteGame($event)" />
     }
@@ -47,7 +62,7 @@
   <!-- Vista TABELLA -->
   @if (viewMode() === 'table') {
   <div class="table-wrapper">
-    <table mat-table [dataSource]="filteredGames()" class="games-table">
+    <table mat-table [dataSource]="sortedGames()" class="games-table">
 
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef>{{ 'table.title' | transloco }}</th>
@@ -104,7 +119,7 @@
   </div>
   }
 
-  @if (filteredGames().length === 0) {
+  @if (sortedGames().length === 0) {
   <p class="empty-state">
     {{ searchQuery || activeFilterCount() > 0
     ? ('list.emptySearch' | transloco: { query: searchQuery })
@@ -113,7 +128,15 @@
   }
 
   <p class="count-label">
-    {{ 'list.count' | transloco: { count: filteredGames().length } }}
+    {{ 'list.count' | transloco: { count: sortedGames().length } }}
   </p>
   }
 </div>
+
+<!-- FAB "Aggiungi gioco" — visibile solo se loggato -->
+@if (auth.isLoggedIn()) {
+<button mat-fab color="primary" class="add-fab" [matTooltip]="'list.add' | transloco" matTooltipPosition="left"
+  (click)="openAddDialog()">
+  <mat-icon>add</mat-icon>
+</button>
+}

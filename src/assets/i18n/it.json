@@ -20,8 +20,15 @@
     "add": "Aggiungi",
     "count": "{{ count }} giochi",
     "empty": "Nessun gioco trovato.",
-    "emptySearch": "Nessun risultato per \"{{ query }}\"."
+    "emptySearch": "Nessun risultato per \"{{ query }}\".",
+    "sort": "Ordina per"
   },
+  "sort": {
+    "title": "Titolo",
+    "requiredAge": "Età richiesta",
+    "releaseDate": "Data di pubblicazione",
+    "buyDate": "Data di acquisto"
+  },  
   "table": {
     "title": "Titolo",
     "genre": "Genere",

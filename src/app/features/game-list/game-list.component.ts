@@ -5,6 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -23,6 +24,12 @@ import { Game } from '../../core/models/game.model';
 
 export type ViewMode = 'card' | 'table';
 
+/** Campi su cui è possibile ordinare */
+export type SortField = 'title' | 'requiredAge' | 'releaseDate' | 'buyDate';
+
+/** Direzione ordinamento */
+export type SortDir = 'asc' | 'desc';
+
 @Component({
   selector: 'app-game-list',
   standalone: true,
@@ -33,6 +40,7 @@ export type ViewMode = 'card' | 'table';
     MatFormFieldModule,
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatTooltipModule,
@@ -56,6 +64,18 @@ export class GameListComponent {
   loading = signal(false);
   viewMode = signal<ViewMode>('card');
 
+  // Stato ordinamento
+  sortField = signal<SortField>('title');
+  sortDir = signal<SortDir>('asc');
+
+  /** Opzioni di ordinamento mostrate nel menu */
+  readonly sortOptions: { field: SortField; labelKey: string }[] = [
+    { field: 'title', labelKey: 'sort.title' },
+    { field: 'requiredAge', labelKey: 'sort.requiredAge' },
+    { field: 'releaseDate', labelKey: 'sort.releaseDate' },
+    { field: 'buyDate', labelKey: 'sort.buyDate' },
+  ];
+
   // Query di ricerca rapida — aggiorna il filtro nel service
   get searchQuery(): string {
     return this.filterService.filters().query;
@@ -75,6 +95,21 @@ export class GameListComponent {
     this.filterService.apply(this.games())
   );
 
+  // Giochi filtrati e ordinati
+  readonly sortedGames = computed(() => {
+    const list = [...this.filteredGames()];
+    const field = this.sortField();
+    const dir = this.sortDir();
+
+    return list.sort((a, b) => {
+      const valA = this.sortValue(a, field);
+      const valB = this.sortValue(b, field);
+      if (valA === valB) return 0;
+      const cmp = valA < valB ? -1 : 1;
+      return dir === 'asc' ? cmp : -cmp;
+    });
+  });
+
   // Numero filtri avanzati attivi (per il badge)
   readonly activeFilterCount = computed(() =>
     this.filterService.activeCount()
@@ -92,6 +127,28 @@ export class GameListComponent {
 
   setViewMode(mode: ViewMode): void {
     this.viewMode.set(mode);
+  }
+
+  /**
+   * Seleziona il campo di ordinamento.
+   * Se il campo è già attivo inverte la direzione, altrimenti imposta asc.
+   */
+  setSort(field: SortField): void {
+    if (this.sortField() === field) {
+      this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.sortField.set(field);
+      this.sortDir.set('asc');
+    }
+  }
+
+  /**
+   * Restituisce la label i18n del campo di ordinamento attivo,
+   * usata come tooltip / testo del pulsante.
+   */
+  activeSortLabel(): string {
+    const opt = this.sortOptions.find(o => o.field === this.sortField());
+    return opt ? this.translate.t(opt.labelKey) : '';
   }
 
   loadGames(): void {
@@ -170,5 +227,42 @@ export class GameListComponent {
       },
       error: () => this.snackbar.open(this.translate.t('errors.deleteFailed'), 'OK', { duration: 4000 }),
     });
+  }
+
+  // ── HELPERS PRIVATI ────────────────────────────────────────────────────────
+
+  /**
+   * Restituisce il valore comparabile per il campo di ordinamento.
+   * - title: stringa lowercase per confronto case-insensitive
+   * - requiredAge: numero (celle vuote → 0, quindi vanno in fondo con desc)
+   * - releaseDate / buyDate: stringa ISO derivata da gg/mm/aaaa → ordinamento cronologico corretto
+   *   senza dipendere da Date.parse (che è locale-sensitive)
+   */
+  private sortValue(game: Game, field: SortField): string | number {
+    switch (field) {
+      case 'title':
+        return (game.title ?? '').toLowerCase();
+
+      case 'requiredAge':
+        return parseFloat(game.requiredAge ?? '') || 0;
+
+      case 'releaseDate':
+        return this.dateToISO(game.releaseDate);
+
+      case 'buyDate':
+        return this.dateToISO(game.buyDate);
+    }
+  }
+
+  /**
+   * Converte "gg/mm/aaaa" in "aaaa-mm-gg" per un ordinamento lessicografico corretto.
+   * Restituisce '' per valori assenti o in formato non riconosciuto (finiscono in fondo).
+   */
+  private dateToISO(date: string | undefined): string {
+    if (!date) return '';
+    const parts = date.split('/');
+    if (parts.length !== 3) return '';
+    const [d, m, y] = parts;
+    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
   }
 }

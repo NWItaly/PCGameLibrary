@@ -20,7 +20,14 @@
     "add": "Add",
     "count": "{{ count }} games",
     "empty": "No games found.",
-    "emptySearch": "No results for \"{{ query }}\"."
+    "emptySearch": "No results for \"{{ query }}\".",
+    "sort": "Sort by"
+  },
+  "sort": {
+    "title": "Title",
+    "requiredAge": "Required age",
+    "releaseDate": "Release date",
+    "buyDate": "Buy date"
   },
   "table": {
     "title": "Title",

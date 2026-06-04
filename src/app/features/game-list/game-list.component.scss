@@ -54,3 +54,11 @@
   color: var(--mat-sys-on-surface-variant);
   margin: 0;
 }
+
+/* FAB "Aggiungi gioco" — fisso in basso a destra */
+.add-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+}
