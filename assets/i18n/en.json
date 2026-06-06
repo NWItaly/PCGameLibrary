@@ -62,6 +62,7 @@
     "cover": "Cover",
     "italianSupportTooltip": "Italian language: {{ value }}",
     "vrSupportTooltip": "VR support: {{ value }}",
+    "vrSupportTooltipNoValue": "VR support",
     "releaseDateTooltip": "Release date",
     "genres": "Genres",
     "features": "Features",
