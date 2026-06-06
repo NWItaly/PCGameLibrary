@@ -131,15 +131,25 @@ export class GameFormComponent {
   readonly steamError = signal<string | null>(null);
 
   /**
+   * Stato feedback del pulsante Steam: null = default, 'success' = verde, 'error' = rosso.
+   * Torna a null automaticamente dopo 5 secondi.
+   */
+  readonly steamBtnState = signal<'success' | 'error' | null>(null);
+
+  /** Handle del timeout per il reset del colore pulsante Steam */
+  private steamBtnResetTimer: ReturnType<typeof setTimeout> | null = null;
+
+  /**
    * Snapshot dei campi gestiti da Steam (sola lettura nel form).
    * In modalità modifica vengono pre-popolati da `data`;
    * vengono aggiornati da loadFromSteam() dopo il fetch.
    */
   steamFields = {
+    name: this.data?.title ?? '',
     features: this.data?.features ?? ([] as string[]),
     genres: this.data?.genres ?? ([] as string[]),
-    italianSupport: this.data?.italianSupport ?? '',
-    vR: this.data?.vR ?? '',
+    italianSupport: this.data?.italianSupport ?? false,
+    vR: this.data?.vR ?? false,
     releaseDate: this.data?.releaseDate ?? '',
     image: this.data?.image ?? '',
   };
@@ -186,9 +196,25 @@ export class GameFormComponent {
   }
 
   /**
-   * Chiama il proxy Apps Script con lo steamId corrente.
-   * Aggiorna steamFields con i dati ricevuti; gestisce loading ed errori.
+   * Normalizza il titolo proveniente da Steam:
+   * - Sposta l'articolo iniziale "The" in fondo tra parentesi.
+   *   Es: "The 7th Guest" → "7th Guest (The)"
+   * - Il confronto è case-insensitive; la parola "The" viene preservata in forma canonica.
    */
+  private normalizeTitle(name: string): string {
+    const trimmed = name.trim();
+    const match = trimmed.match(/^The\s+(.+)$/i);
+    if (match) {
+      return `${match[1]} (The)`;
+    }
+    return trimmed;
+  }
+
+  /**
+ * Chiama il proxy Apps Script con lo steamId corrente.
+ * Aggiorna steamFields con i dati ricevuti; gestisce loading ed errori.
+ * Il titolo viene normalizzato: "The X" → "X (The)".
+ */
   loadFromSteam(): void {
     const steamId = this.form.controls.steamId.value?.trim();
     if (!steamId) return;
@@ -198,7 +224,9 @@ export class GameFormComponent {
 
     this.steamService.loadByAppId(steamId).subscribe({
       next: (data) => {
+        const normalizedTitle = this.normalizeTitle(data.name);
         this.steamFields = {
+          name: normalizedTitle,
           features: data.features,
           genres: data.genres,
           italianSupport: data.italianSupport,
@@ -206,9 +234,12 @@ export class GameFormComponent {
           releaseDate: data.releaseDate,
           image: data.image,
         };
+        // Aggiorna anche il campo title nel form con il titolo normalizzato
+        this.form.controls.title.setValue(normalizedTitle);
         // requiredAge va nel form (editabile), non in steamFields
         this.form.controls.requiredAge.setValue(data.requiredAge ?? '');
         this.steamLoading.set(false);
+        this.setSteamBtnFeedback('success');
       },
       error: (err) => {
         // HTTP 404 → appid non trovato; altri → errore generico
@@ -217,6 +248,7 @@ export class GameFormComponent {
           : this.translate.t('errors.steamLoadFailed');
         this.steamError.set(msg);
         this.steamLoading.set(false);
+        this.setSteamBtnFeedback('error');
         console.error('[GameForm] loadFromSteam:', err);
       },
     });
@@ -281,5 +313,20 @@ export class GameFormComponent {
       month: '2-digit',
       year: 'numeric',
     });
+  }
+
+  /**
+ * Imposta lo stato colore del pulsante Steam e avvia il timer di reset.
+ * Cancella l'eventuale timer precedente per evitare reset anticipati.
+ */
+  private setSteamBtnFeedback(state: 'success' | 'error'): void {
+    if (this.steamBtnResetTimer !== null) {
+      clearTimeout(this.steamBtnResetTimer);
+    }
+    this.steamBtnState.set(state);
+    this.steamBtnResetTimer = setTimeout(() => {
+      this.steamBtnState.set(null);
+      this.steamBtnResetTimer = null;
+    }, 5000);
   }
 }

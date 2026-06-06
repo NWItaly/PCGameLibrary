@@ -11,8 +11,8 @@ export interface Game {
   steamId?: string;
   features: string[];
   genres: string[];
-  italianSupport?: string;
-  vR?: string;
+  italianSupport?: boolean;
+  vR?: boolean;
   releaseDate?: string;
   stateStefano?: string;
   stateErica?: string;

@@ -27,7 +27,8 @@
     <!-- ── Prezzo ──────────────────────────────────────────────────────────── -->
     <mat-form-field appearance="outline">
       <mat-label>{{ 'form.price' | transloco }}</mat-label>
-      <input matInput formControlName="price" placeholder="{{ 'form.pricePlaceholder' | transloco }}" inputmode="decimal" />
+      <input matInput formControlName="price" placeholder="{{ 'form.pricePlaceholder' | transloco }}"
+        inputmode="decimal" />
     </mat-form-field>
 
     <!-- ── Data acquisto ───────────────────────────────────────────────────── -->
@@ -45,9 +46,12 @@
     <div class="steam-row full-width">
       <mat-form-field appearance="outline" class="steam-id-field">
         <mat-label>{{ 'form.steamId' | transloco }}</mat-label>
-        <input matInput formControlName="steamId" placeholder="{{ 'form.steamIdPlaceholder' | transloco }}" inputmode="numeric" />
+        <input matInput formControlName="steamId" placeholder="{{ 'form.steamIdPlaceholder' | transloco }}"
+          inputmode="numeric" />
       </mat-form-field>
       <button mat-stroked-button type="button" class="steam-load-btn"
+        [class.steam-btn--success]="steamBtnState() === 'success'"
+        [class.steam-btn--error]="steamBtnState() === 'error'"
         [disabled]="!form.controls.steamId.value || steamLoading()" (click)="loadFromSteam()">
         @if (steamLoading()) {
         <mat-spinner diameter="18" />
@@ -138,19 +142,21 @@
       <!-- Copertina + metadati affiancati -->
       <div class="steam-cover-row">
         @if (steamFields.image) {
-        <img class="steam-cover" [src]="steamFields.image" [alt]="('form.cover' | transloco) + ' ' + form.controls.title.value" />
+        <img class="steam-cover" [src]="steamFields.image"
+          [alt]="('form.cover' | transloco) + ' ' + form.controls.title.value" />
         }
         <div class="steam-meta">
           @if (steamFields.italianSupport) {
-          <span class="meta-item" [matTooltip]="translate.t('form.italianSupportTooltip', { value: steamFields.italianSupport })">
+          <span class="meta-item"
+            [matTooltip]="translate.t('form.italianSupportTooltip', { value: translate.t(`search.${steamFields.italianSupport ? 'yes' : 'no'}`) })">
             <mat-icon>translate</mat-icon>
-            {{ steamFields.italianSupport }}
+            {{ steamFields.italianSupport ? ('search.yes' | transloco) : ('search.no' | transloco) }}
           </span>
           }
           @if (steamFields.vR) {
           <span class="meta-item" [matTooltip]="translate.t('form.vrSupportTooltip', { value: steamFields.vR })">
             <mat-icon>head_mounted_device</mat-icon>
-            {{ steamFields.vR }}
+            {{ steamFields.vR ? ('search.yes' | transloco) : ('search.no' | transloco) }}
           </span>
           }
           @if (steamFields.releaseDate) {

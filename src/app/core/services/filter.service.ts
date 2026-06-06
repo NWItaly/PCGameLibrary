@@ -92,14 +92,14 @@ export class FilterService {
 
       // Supporto italiano — valore mancante trattato come 'no'
       if (f.italianSupport !== null) {
-        const val = g.italianSupport?.toLowerCase() || 'no';
-        if (val !== (f.italianSupport ? 'sì' : 'no')) return false;
+        const val = g.italianSupport || false;
+        if (val !== f.italianSupport) return false;
       }
 
       // VR — valore mancante trattato come 'no'
       if (f.vr !== null) {
-        const val = g.vR?.toLowerCase() || 'no';
-        if (val !== (f.vr ? 'sì' : 'no')) return false;
+        const val = g.vR || false;
+        if (val !== f.vr) return false;
       }
 
       // Età richiesta — valore mancante trattato come 0

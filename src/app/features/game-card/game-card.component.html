@@ -24,6 +24,11 @@
       @if (game().platform) {
       <app-platform-icon [platform]="game().platform!" />
       }
+      @if (game().vR) {
+      <span [matTooltip]="translate.t('form.vrSupportTooltipNoValue')">
+        <mat-icon>head_mounted_device</mat-icon>
+      </span>
+      }
 
       @if (this.game().releaseDate) {
       <span class="meta-year">{{ releaseYear() }}</span>

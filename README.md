@@ -28,6 +28,7 @@ TODO: Generazione di un template
 ---
 
 ## Setup Apps Script
+Dal sito di [App Script API](https://script.google.com/)
 
 1. Nuovo progetto (rinominalo)
 1. Impostazioni progetto
@@ -37,6 +38,8 @@ TODO: Generazione di un template
     - Crea il file e copia il contenuto di `steamProxy.gs`
     - Copia il contenuto di `appscript.json`
 1. Esegui il deployment -> Nuovo deployment. Copia il Deployment ID nella variabile steamScriptId in `environment.ts`
+
+**P.S.**: Se si fanno modifiche allo script è necessario fare un rilascio: deployment -> Gestisci deployment -> Modifica -> Esegui il deployment.
 
 ---
 
