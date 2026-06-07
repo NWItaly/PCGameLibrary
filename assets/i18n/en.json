@@ -24,6 +24,7 @@
     "add": "Add",
     "count": "{{ count }} games",
     "empty": "No games found.",
+    "noLoggedIn": "Log in to see your library.",
     "emptySearch": "No results for \"{{ query }}\".",
     "sort": "Sort by"
   },
