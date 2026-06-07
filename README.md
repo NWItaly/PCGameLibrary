@@ -106,6 +106,7 @@ Il workflow `.github/workflows/deploy.yml` inietta i secrets nel build e pubblic
 
 ## Future implementazioni
 
+- Limitare le chiamate service di google per evitare blocchi/errori
 - Statistiche e grafici
 - Modifica dati "Steam"
 - Funzionalità massive (aggiornamento dati)

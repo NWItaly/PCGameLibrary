@@ -1,0 +1,133 @@
+<!-- bulk-progress-dialog.component.html -->
+<h2 mat-dialog-title class="dialog-title">
+    <mat-icon class="dialog-title-icon">sync</mat-icon>
+    {{ data.operationLabel }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+    <!-- Contatori -->
+    <div class="counters">
+        <div class="counter">
+            <span class="counter-value">{{ s.processed }}</span>
+            <span class="counter-label">/ {{ s.total }}</span>
+        </div>
+        <div class="counter-chips">
+            <mat-chip-set>
+                <mat-chip class="chip-success">
+                    <mat-icon matChipAvatar>check_circle</mat-icon>
+                    {{ s.success }} aggiornati
+                </mat-chip>
+                <mat-chip class="chip-skipped">
+                    <mat-icon matChipAvatar>skip_next</mat-icon>
+                    {{ s.skipped }} saltati
+                </mat-chip>
+                <mat-chip class="chip-error" [class.chip-error--active]="s.errors > 0">
+                    <mat-icon matChipAvatar>error</mat-icon>
+                    {{ s.errors }} errori
+                </mat-chip>
+            </mat-chip-set>
+        </div>
+    </div>
+
+    <!-- Progress bar -->
+    <mat-progress-bar [mode]="s.running ? 'determinate' : 'determinate'" [value]="bulk.progressPercent()"
+        class="progress-bar" />
+    <p class="progress-label">{{ bulk.progressPercent() }}%</p>
+
+    <!-- Record in elaborazione corrente -->
+    @if (s.running && !aborting) {
+    <p class="processing-label">
+        <mat-icon class="spinning">sync</mat-icon>
+        Elaborazione in corso…
+    </p>
+    }
+
+    <!-- Interruzione in corso -->
+    @if (aborting && s.running) {
+    <p class="processing-label processing-label--aborting">
+        <mat-icon class="spinning">stop_circle</mat-icon>
+        Interruzione in corso, attendo il termine del record corrente…
+    </p>
+    }
+
+    <!-- Completato -->
+    @if (s.completed) {
+    <div class="completed-banner" [class.completed-banner--errors]="s.errors > 0">
+        <mat-icon>{{ s.errors > 0 ? 'warning' : 'check_circle' }}</mat-icon>
+        <span>
+            {{ abortedByUser
+            ? 'Operazione interrotta dall\'utente (' + s.processed + ' record elaborati)'
+            : s.errors > 0
+            ? 'Completato con ' + s.errors + ' errori'
+            : 'Completato con successo' }}
+        </span>
+    </div>
+    }
+
+    <mat-divider class="section-divider" />
+
+    <!-- Pannello errori espandibile -->
+    @if (errorResults.length > 0) {
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon class="panel-icon panel-icon--error">error</mat-icon>
+                    Errori ({{ errorResults.length }})
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="result-list">
+                @for (r of errorResults; track r.id) {
+                <div class="result-row result-row--error">
+                    <mat-icon>error_outline</mat-icon>
+                    <div class="result-row-text">
+                        <span class="result-title">{{ r.title }}</span>
+                        <span class="result-message">{{ r.message }}</span>
+                    </div>
+                </div>
+                }
+            </div>
+        </mat-expansion-panel>
+
+        <!-- Pannello saltati espandibile (solo se presenti) -->
+        @if (skippedResults.length > 0) {
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon class="panel-icon panel-icon--skipped">skip_next</mat-icon>
+                    Saltati ({{ skippedResults.length }})
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="result-list">
+                @for (r of skippedResults; track r.id) {
+                <div class="result-row result-row--skipped">
+                    <mat-icon>remove_circle_outline</mat-icon>
+                    <div class="result-row-text">
+                        <span class="result-title">{{ r.title }}</span>
+                        <span class="result-message">{{ r.message }}</span>
+                    </div>
+                </div>
+                }
+            </div>
+        </mat-expansion-panel>
+        }
+    </mat-accordion>
+    }
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <!-- Stop: visibile solo durante l'elaborazione, disabilitato se abort già richiesto -->
+    @if (s.running) {
+    <button mat-stroked-button color="warn" [disabled]="aborting" (click)="abort()">
+        <mat-icon>stop</mat-icon>
+        Interrompi
+    </button>
+    }
+
+    <button mat-flat-button color="primary" [disabled]="s.running" (click)="close()">
+        <mat-icon>close</mat-icon>
+        Chiudi
+    </button>
+</mat-dialog-actions>

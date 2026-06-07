@@ -15,7 +15,7 @@ const BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
 
 /**
  * Range completo del foglio usato per getGames() e addGame() (append).
- * String.fromCharCode(65 + 18) = 'S' → copre tutte le 19 colonne (A:S).
+ * String.fromCharCode(65 + 19) = 'T' → copre tutte le 20 colonne (A:T).
  */
 const RANGE = `${environment.sheetName}!A:${String.fromCharCode(65 + SHEET_LASTCOLUMN)}`;
 
@@ -136,9 +136,8 @@ export class SheetsService {
    * Aggiorna un gioco esistente sovrascrivendo solo le colonne editabili.
    *
    * Colonne NON toccate (intenzionalmente):
-   * - F, col. 5: buyYear
-   * - Q, col. 16: =IMAGE(…)
-   * - S, col. 18: ARRAYFORMULA
+   * - F, col. 5:  buyYear  → ARRAYFORMULA calcola ANNO(E)
+   * - Q, col. 16: image    → formula =IMAGE(…) calcolata dal foglio
    */
   updateGame(game: Game): Observable<any> {
     if (!game.rowIndex) throw new Error('updateGame: rowIndex mancante');
@@ -175,27 +174,23 @@ export class SheetsService {
    *   A  col 0  id
    *   B  col 1  title
    *   C  col 2  platform
-   *   D  col 3  price          → stringa numerica "29.99", USER_ENTERED la converte in number
-   *   E  col 4  buyDate        → formato ISO "aaaa-mm-gg", riconosciuto da Sheets in ogni locale
-   *   -- col 5  buyYear        → SALTATA: ARRAYFORMULA calcola ANNO(E) — scrivere '' la uccide
+   *   D  col 3  price          → JS number per evitare parsing locale IT
+   *   E  col 4  buyDate        → formato ISO "aaaa-mm-gg"
+   *   -- col 5  buyYear        → SALTATA: ARRAYFORMULA calcola ANNO(E)
    *   G  col 6  steamId
    *   H  col 7  features       → stringa "RPG, FPS"
    *   I  col 8  genres         → stringa "RPG, FPS"
-   *   J  col 9  italianSupport → stringa "Sì"/"No"
-   *   K  col 10 vR             → stringa "Sì"/"No"/"Non interessa" 
-   *   L  col 11 releaseDate    → formato ISO "aaaa-mm-gg", riconosciuto da Sheets in ogni locale
-   *   M  col 14 stateStefano
-   *   N  col 15 stateErica
-   *   O  col 16 stateAlessandro
-   *   P  col 12 imageUrl       → URL copertina
-   *   -- col 13 image          → SALTATA: formula =IMAGE(…) calcolata dal foglio
-   *   R  col 17 rating         → stringa "1"-"5", USER_ENTERED la converte in number per smart chip
-   *   -- col 18 Errore         → SALTATA: formula errore calcolata dal foglio
-   *   T  col 19 requiredAge    → stringa numerica "18", USER_ENTERED la converte in number
-   *
-   * USER_ENTERED (invece di RAW) permette a Sheets di interpretare il tipo corretto:
-   * - "30.12" → numero,  "2024-12-30" → data,  "Non interessa" → testo
-   * Questo evita l'apostrofo visibile nella barra della formula per date e numeri.
+   *   J  col 9  italianSupport → "Sì"/"No"
+   *   K  col 10 vR             → "Sì"/"No"
+   *   L  col 11 releaseDate    → formato ISO "aaaa-mm-gg"
+   *   M  col 12 stateStefano
+   *   N  col 13 stateErica
+   *   O  col 14 stateAlessandro
+   *   P  col 15 imageUrl       → URL copertina
+   *   -- col 16 image          → SALTATA: formula =IMAGE(…)
+   *   R  col 17 rating         → JS number per smart chip
+   *   S  col 18 error          → testo libero; stringa vuota = nessun errore
+   *   T  col 19 requiredAge    → JS number
    */
   private writeGameCells(
     game: Omit<Game, 'rowIndex'>,
@@ -242,15 +237,14 @@ export class SheetsService {
           ]],
         },
         // Q: ARRAYFORMULA
-        // R: rating
+        // R-T: rating, error, requiredAge
         {
-          range: `${s}!R${r}`,
-          values: [[this.toNumber(game.rating)]],
-        },
-        // S: ARRAYFORMULA
-        {
-          range: `${s}!T${r}`,
-          values: [[this.toNumber(game.requiredAge)]],
+          range: `${s}!R${r}:T${r}`,
+          values: [[
+            this.toNumber(game.rating),
+            game.error ?? '',
+            this.toNumber(game.requiredAge)
+          ]],
         },
       ],
     };

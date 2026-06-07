@@ -1,0 +1,142 @@
+// admin.component.scss
+
+.admin-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-header-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: var(--mat-sys-primary);
+}
+
+.admin-title {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface);
+}
+
+.admin-subtitle {
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+    color: var(--mat-sys-on-surface-variant);
+}
+
+// ── Sezioni ───────────────────────────────────────────────────────────────────
+
+.admin-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--mat-sys-on-surface);
+}
+
+.section-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: var(--mat-sys-secondary);
+}
+
+// ── Grid card ─────────────────────────────────────────────────────────────────
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+// ── Card operazione ───────────────────────────────────────────────────────────
+
+.operation-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-avatar-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+    color: var(--mat-sys-primary);
+    background: none !important;
+}
+
+.card-content {
+    flex: 1;
+    padding-top: 8px;
+}
+
+.card-details {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        color: var(--mat-sys-on-surface-variant);
+    }
+}
+
+.detail-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+// ── Toggle opzioni ────────────────────────────────────────────────────────────
+
+.card-toggle {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toggle-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--mat-sys-on-surface-variant);
+    line-height: 1.4;
+}
+
+.hint-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}

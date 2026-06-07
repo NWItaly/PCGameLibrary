@@ -29,9 +29,25 @@ interface SteamRawData {
   required_age: string | number;
 }
 
+/**
+ * Struttura della risposta Execution API di Apps Script.
+ *
+ * In caso di errore, il campo `error.details` contiene un array con
+ * `errorMessage` (il messaggio dell'eccezione lanciata dallo script)
+ * e `scriptStackTraceElements` (stack trace). Il campo `error.message`
+ * contiene solo "ScriptError", non il messaggio utile.
+ */
 interface ScriptApiResponse {
   response?: { result: SteamRawData };
-  error?: { message: string; status: string };
+  error?: {
+    code: number;
+    message: string;   // sempre "ScriptError" — non usare per display
+    status: string;
+    details?: {
+      errorMessage?: string;
+      scriptStackTraceElements?: { function: string; lineNumber: number }[];
+    }[];
+  };
 }
 
 const SCRIPT_API = 'https://script.googleapis.com/v1/scripts';
@@ -65,7 +81,10 @@ export class SteamService {
       }),
       map((res) => {
         if (res.error) {
-          throw new Error(res.error.message ?? 'Errore Apps Script');
+          // Il messaggio utile è in details[0].errorMessage, non in error.message
+          // che contiene sempre il generico "ScriptError"
+          const detail = res.error.details?.[0]?.errorMessage;
+          throw new Error(detail ?? res.error.message ?? 'Errore Apps Script');
         }
         if (!res.response?.result) {
           throw new Error('Risposta Apps Script vuota');

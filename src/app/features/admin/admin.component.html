@@ -1,0 +1,79 @@
+<!-- admin.component.html -->
+<div class="admin-container">
+
+    <header class="admin-header">
+        <mat-icon class="admin-header-icon">admin_panel_settings</mat-icon>
+        <div>
+            <h1 class="admin-title">Operazioni massive</h1>
+            <p class="admin-subtitle">Funzionalità di gestione bulk per la libreria giochi</p>
+        </div>
+    </header>
+
+    <mat-divider />
+
+    <section class="admin-section">
+        <h2 class="section-title">
+            <mat-icon class="section-icon">cloud_sync</mat-icon>
+            Steam
+        </h2>
+
+        <div class="cards-grid">
+
+            <mat-card class="operation-card">
+                <mat-card-header>
+                    <mat-icon mat-card-avatar class="card-avatar-icon">update</mat-icon>
+                    <mat-card-title>Aggiorna dati Steam</mat-card-title>
+                    <mat-card-subtitle>
+                        Aggiorna generi, feature, lingua italiana, VR, data uscita, immagine e età minima
+                        per tutti i giochi con Steam ID
+                    </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content class="card-content">
+                    <ul class="card-details">
+                        <li>
+                            <mat-icon class="detail-icon">schedule</mat-icon>
+                            Tempo stimato: ~2 sec per gioco con Steam ID
+                        </li>
+                        <li>
+                            <mat-icon class="detail-icon">layers</mat-icon>
+                            Scrittura su Sheets ogni 50 giochi
+                        </li>
+                        <li>
+                            <mat-icon class="detail-icon">skip_next</mat-icon>
+                            I giochi senza Steam ID vengono saltati automaticamente
+                        </li>
+                        <li>
+                            <mat-icon class="detail-icon">error_outline</mat-icon>
+                            Gli errori vengono scritti nella colonna "Errore" del foglio
+                        </li>
+                    </ul>
+
+                    <!-- Toggle ritenta solo errori -->
+                    <div class="card-toggle">
+                        <mat-slide-toggle [checked]="onlyErrors()" (change)="onlyErrors.set($event.checked)"
+                            color="primary">
+                            Ritenta solo i giochi con errori precedenti
+                        </mat-slide-toggle>
+                        @if (onlyErrors()) {
+                        <p class="toggle-hint">
+                            <mat-icon class="hint-icon">info</mat-icon>
+                            Verranno elaborati solo i giochi che hanno un errore nella colonna "Errore" del foglio
+                        </p>
+                        }
+                    </div>
+                </mat-card-content>
+
+                <mat-card-actions>
+                    <button mat-flat-button color="primary" (click)="startSteamUpdate()"
+                        [matTooltip]="onlyErrors() ? 'Ritenta solo i giochi con errori' : 'Aggiorna tutti i giochi con Steam ID'">
+                        <mat-icon>{{ onlyErrors() ? 'replay' : 'play_arrow' }}</mat-icon>
+                        {{ onlyErrors() ? 'Ritenta errori' : 'Avvia' }}
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+
+        </div>
+    </section>
+
+</div>

@@ -3,6 +3,30 @@
   <!-- Sidenav laterale -->
   <mat-sidenav #sidenav mode="over" position="start" class="app-sidenav">
     <div class="sidenav-content">
+      
+      <!-- Home -->
+      <div class="sidenav-section">
+        <a mat-button routerLink="/" (click)="sidenav.close()">
+          <mat-icon>home</mat-icon>
+          Home
+        </a>
+      </div>
+
+      <!-- Link operazioni massive (solo admin) -->
+      <div class="sidenav-section">
+        <a mat-button routerLink="/admin" (click)="sidenav.close()">
+          <mat-icon>admin_panel_settings</mat-icon>
+          Operazioni massive
+        </a>
+      </div>
+
+      <!-- Link privacy -->
+      <div class="sidenav-section">
+        <a mat-button routerLink="/privacy" (click)="sidenav.close()">
+          <mat-icon>privacy_tip</mat-icon>
+          {{ 'nav.privacy' | transloco }}
+        </a>
+      </div>
 
       <!-- Tema -->
       <div class="sidenav-section">
@@ -23,8 +47,6 @@
         </mat-button-toggle-group>
       </div>
 
-      <mat-divider />
-
       <!-- Lingua -->
       <div class="sidenav-section">
         <p class="sidenav-label">{{ 'sidenav.language' | transloco }}</p>
@@ -34,10 +56,12 @@
         </mat-button-toggle-group>
       </div>
 
-      <mat-divider />
 
       <!-- Backup -->
       @if (auth.isLoggedIn()) {
+
+      <!-- <mat-divider /> -->
+
       <div class="sidenav-section">
         <p class="sidenav-label">
           <mat-icon class="sidenav-label-icon">backup</mat-icon>
@@ -63,16 +87,7 @@
         }
       </div>
 
-      <mat-divider />
       }
-
-      <!-- Link privacy -->
-      <div class="sidenav-section">
-        <a mat-button routerLink="/privacy" (click)="sidenav.close()">
-          <mat-icon>privacy_tip</mat-icon>
-          {{ 'nav.privacy' | transloco }}
-        </a>
-      </div>
 
     </div>
   </mat-sidenav>
