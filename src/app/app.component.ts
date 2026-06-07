@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+// app.component.ts
+import { Component, inject, OnInit, ViewChild, effect } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,7 +11,10 @@ import { RouterModule } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from './core/services/auth.service';
 import { ThemeService } from './core/services/theme.service';
+import { BackupService } from './core/services/backup.service';
+import { BackupDatePipe } from './shared/pipes/backup-date.pipe';
 import { MatIconRegistry } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-root',
@@ -23,8 +27,10 @@ import { MatIconRegistry } from '@angular/material/icon';
     MatListModule,
     MatButtonToggleModule,
     MatDividerModule,
+    MatTooltipModule,
     RouterModule,
     TranslocoModule,
+    BackupDatePipe
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -32,15 +38,24 @@ import { MatIconRegistry } from '@angular/material/icon';
 export class AppComponent implements OnInit {
   auth = inject(AuthService);
   theme = inject(ThemeService);
+  backup = inject(BackupService);
   private transloco = inject(TranslocoService);
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
-  // Espone il tipo per il template
   readonly ThemeMode = { light: 'light', dark: 'dark', system: 'system' } as const;
 
   constructor() {
     inject(MatIconRegistry).setDefaultFontSetClass('material-symbols-outlined');
+
+    // Avvia il backup giornaliero al primo login valido
+    effect(() => {
+      if (this.auth.isLoggedIn()) {
+        this.backup.runDailyBackupIfNeeded().catch(err =>
+          console.error('Backup giornaliero fallito:', err)
+        );
+      }
+    });
   }
 
   ngOnInit(): void {

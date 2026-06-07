@@ -4,7 +4,6 @@
   <mat-sidenav #sidenav mode="over" position="start" class="app-sidenav">
     <div class="sidenav-content">
 
-
       <!-- Tema -->
       <div class="sidenav-section">
         <p class="sidenav-label">{{ 'sidenav.theme' | transloco }}</p>
@@ -37,6 +36,36 @@
 
       <mat-divider />
 
+      <!-- Backup -->
+      @if (auth.isLoggedIn()) {
+      <div class="sidenav-section">
+        <p class="sidenav-label">
+          <mat-icon class="sidenav-label-icon">backup</mat-icon>
+          {{ 'sidenav.backup' | transloco }}
+        </p>
+
+        @if (backup.isRunning()) {
+        <p class="backup-status backup-status--running">
+          <mat-icon class="backup-status-icon spinning">sync</mat-icon>
+          {{ 'sidenav.backupRunning' | transloco }}
+        </p>
+        } @else if (backup.backups().length === 0) {
+        <p class="backup-status backup-status--empty">{{ 'sidenav.backupNone' | transloco }}</p>
+        } @else {
+        <ul class="backup-list">
+          @for (b of backup.backups(); track b.id) {
+          <li class="backup-item">
+            <mat-icon class="backup-item-icon">history</mat-icon>
+            <span>{{ b.name | backupDate }}</span>
+          </li>
+          }
+        </ul>
+        }
+      </div>
+
+      <mat-divider />
+      }
+
       <!-- Link privacy -->
       <div class="sidenav-section">
         <a mat-button routerLink="/privacy" (click)="sidenav.close()">
@@ -60,6 +89,17 @@
       <span class="toolbar-title">{{ 'nav.title' | transloco }}</span>
       <span class="spacer"></span>
       @if (auth.isLoggedIn()) {
+      <!-- Icona backup in toolbar: spinning se in corso, badge con numero se disponibili -->
+      <button mat-icon-button [matTooltip]="'sidenav.backup' | transloco" (click)="sidenav.open()"
+        class="toolbar-backup-btn">
+        <mat-icon [class.spinning]="backup.isRunning()">
+          {{ backup.isRunning() ? 'sync' : 'backup' }}
+        </mat-icon>
+        @if (!backup.isRunning() && backup.backups().length > 0) {
+        <span class="toolbar-backup-badge">{{ backup.backups().length }}</span>
+        }
+      </button>
+
       <button mat-stroked-button (click)="auth.logout()">
         <mat-icon>logout</mat-icon> {{ 'auth.logout' | transloco }}
       </button>

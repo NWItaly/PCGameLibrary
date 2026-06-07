@@ -7,6 +7,7 @@ declare const google: any;
 const SCOPES = [
   'https://www.googleapis.com/auth/spreadsheets',
   'https://www.googleapis.com/auth/script.external_request',
+  'https://www.googleapis.com/auth/drive',
 ].join(' ');
 
 const TOKEN_KEY = 'gis_access_token';

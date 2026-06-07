@@ -9,8 +9,9 @@ App Angular per gestire la lista dei tuoi giochi PC, con Google Sheets come data
 1. Vai su [console.cloud.google.com](https://console.cloud.google.com)
 2. Crea un nuovo progetto (es. `pc-game-library`)
 3. **API & Services → Library** → abilita:
-    - **Google Sheets API**
     - **Apps Script API**
+    - **Google Drive API**
+    - **Google Sheets API**
 4. **API & Services → Credentials → Create Credentials → OAuth 2.0 Client ID**
    - Application type: **Web application**
    - Authorized JavaScript origins:
@@ -102,3 +103,10 @@ Il workflow `.github/workflows/deploy.yml` inietta i secrets nel build e pubblic
 
 - `environment.ts` (sviluppo locale) contiene valori reali ma non è un problema pubblicarlo: il Client ID OAuth è by design pubblico per le SPA, e lo Spreadsheet ID da solo non dà accesso al foglio privato
 - `environment.prod.ts` contiene solo placeholder — i valori reali vengono iniettati solo durante il build in CI tramite GitHub Secrets e non sono mai visibili nel repository
+
+## Future implementazioni
+
+- Backup
+- Statistiche e grafici
+- Modifica dati "Steam"
+- Funzionalità massive (aggiornamento dati)

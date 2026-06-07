@@ -12,7 +12,10 @@
     "themeLight": "Chiaro",
     "themeDark": "Scuro",
     "themeSystem": "Sistema",
-    "language": "Lingua"
+    "language": "Lingua",
+    "backup": "Backup",
+    "backupRunning": "Backup in corso...",
+    "backupNone": "Nessun backup disponibile"
   },
   "list": {
     "search": "Cerca gioco...",
@@ -29,7 +32,7 @@
     "requiredAge": "Età richiesta",
     "releaseDate": "Data di pubblicazione",
     "buyDate": "Data di acquisto"
-  },  
+  },
   "table": {
     "title": "Titolo",
     "genre": "Genere",
