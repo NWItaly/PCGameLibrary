@@ -122,7 +122,11 @@ export class GameListComponent {
     effect(() => {
       const loggedIn = this.auth.isLoggedIn();
       untracked(() => {
-        if (loggedIn) this.loadGames();
+        if (loggedIn) {
+          this.loadGames();
+        } else {
+          this.games.set([]);
+        }
       });
     });
   }

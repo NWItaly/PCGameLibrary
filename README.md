@@ -106,7 +106,6 @@ Il workflow `.github/workflows/deploy.yml` inietta i secrets nel build e pubblic
 
 ## Future implementazioni
 
-- Backup
 - Statistiche e grafici
 - Modifica dati "Steam"
 - Funzionalità massive (aggiornamento dati)

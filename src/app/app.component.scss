@@ -62,3 +62,23 @@
   margin: 24px auto;
   padding: 0 16px;
 }
+
+.toolbar-backup-btn {
+  position: relative;
+  margin-right: 8px;
+}
+
+.toolbar-backup-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: var(--mat-sys-error);
+  color: var(--mat-sys-on-error);
+  border-radius: 50%;
+  font-size: 10px;
+  line-height: 16px;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  pointer-events: none;
+}
