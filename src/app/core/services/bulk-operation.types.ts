@@ -7,6 +7,8 @@ export interface BulkRecordResult {
     id: string;
     title: string;
     status: BulkRecordStatus;
+    /** Timestamp di completamento del record (ms epoch) — usato per stima tempo */
+    completedAt: number;
     /** Messaggio di errore o motivo dello skip */
     message?: string;
 }
@@ -20,6 +22,8 @@ export interface BulkOperationState {
     success: number;
     skipped: number;
     errors: number;
+    /** Timestamp di avvio operazione (ms epoch) */
+    startedAt: number;
     /** true = elaborazione in corso */
     running: boolean;
     /** true = elaborazione completata (con o senza errori) */

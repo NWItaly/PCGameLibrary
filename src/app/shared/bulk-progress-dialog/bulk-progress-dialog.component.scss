@@ -237,3 +237,37 @@
 .processing-label--aborting {
     color: var(--mat-sys-error);
 }
+
+// ── Riga meta progress (% + stima) ───────────────────────────────────────────
+
+.progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 4px 0 8px;
+}
+
+.progress-label {
+    font-size: 0.8rem;
+    color: var(--mat-sys-on-surface-variant);
+}
+
+.progress-eta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--mat-sys-on-surface-variant);
+}
+
+.eta-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+// ── Label interruzione ────────────────────────────────────────────────────────
+
+.processing-label--aborting {
+    color: var(--mat-sys-error);
+}

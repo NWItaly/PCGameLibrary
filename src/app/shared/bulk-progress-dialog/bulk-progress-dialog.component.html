@@ -31,11 +31,20 @@
     </div>
 
     <!-- Progress bar -->
-    <mat-progress-bar [mode]="s.running ? 'determinate' : 'determinate'" [value]="bulk.progressPercent()"
-        class="progress-bar" />
-    <p class="progress-label">{{ bulk.progressPercent() }}%</p>
+    <mat-progress-bar [mode]="'determinate'" [value]="bulk.progressPercent()" class="progress-bar" />
 
-    <!-- Record in elaborazione corrente -->
+    <!-- Riga sotto la progress bar: percentuale a sinistra, stima a destra -->
+    <div class="progress-meta">
+        <span class="progress-label">{{ bulk.progressPercent() }}%</span>
+        @if (s.running && !aborting && bulk.estimatedTimeLabel()) {
+        <span class="progress-eta">
+            <mat-icon class="eta-icon">schedule</mat-icon>
+            Tempo stimato: {{ bulk.estimatedTimeLabel() }}
+        </span>
+        }
+    </div>
+
+    <!-- Stato elaborazione -->
     @if (s.running && !aborting) {
     <p class="processing-label">
         <mat-icon class="spinning">sync</mat-icon>
