@@ -6,10 +6,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { firstValueFrom } from 'rxjs';
 import { SteamBulkUpdateService } from '../../core/services/steam-bulk-update.service';
 import { BulkOperationService } from '../../core/services/bulk-operation.service';
+import { SheetsService } from '../../core/services/sheets.service';
 import { BulkProgressDialogComponent } from '../../shared/bulk-progress-dialog/bulk-progress-dialog.component';
+import { BulkSettingsDialogComponent } from '../../shared/bulk-settings-dialog/bulk-settings-dialog.component';
+import { BulkOperationOptions, DEFAULT_BULK_OPTIONS } from '../../core/services/bulk-operation.types';
 
 @Component({
     selector: 'app-admin',
@@ -20,7 +24,7 @@ import { BulkProgressDialogComponent } from '../../shared/bulk-progress-dialog/b
         MatIconModule,
         MatDividerModule,
         MatTooltipModule,
-        MatSlideToggleModule,
+        MatProgressSpinnerModule,
     ],
     templateUrl: './admin.component.html',
     styleUrls: ['./admin.component.scss'],
@@ -29,14 +33,28 @@ export class AdminComponent {
     private readonly dialog = inject(MatDialog);
     private readonly steamBulk = inject(SteamBulkUpdateService);
     private readonly bulk = inject(BulkOperationService);
+    private readonly sheets = inject(SheetsService);
 
-    /** Flag toggle "ritenta solo errori" */
-    protected readonly onlyErrors = signal(false);
+    /** Opzioni correnti per l'aggiornamento Steam — persistono tra aperture del dialog */
+    protected steamOptions = signal<BulkOperationOptions>({ ...DEFAULT_BULK_OPTIONS });
 
-    /**
-     * Apre il dialog di progresso e avvia l'aggiornamento massivo Steam.
-     * Il dialog rimane aperto durante tutta l'elaborazione (disableClose = running).
-     */
+    /** true durante lo svuotamento errori */
+    protected clearingErrors = signal(false);
+
+    /** Apre il dialog impostazioni e aggiorna le opzioni se confermato */
+    openSteamSettings(): void {
+        this.dialog.open(BulkSettingsDialogComponent, {
+            data: {
+                operationLabel: 'Aggiornamento dati Steam',
+                currentOptions: this.steamOptions(),
+            },
+            width: '540px',
+            maxWidth: '95vw',
+        }).afterClosed().subscribe((result: BulkOperationOptions | null) => {
+            if (result) this.steamOptions.set(result);
+        });
+    }
+
     startSteamUpdate(): void {
         // Resetta lo stato precedente prima di aprire il dialog
         this.bulk.reset();
@@ -52,12 +70,23 @@ export class AdminComponent {
             maxWidth: '95vw',
         });
 
-        // Avvia l'elaborazione asincrona dopo l'apertura del dialog
-        // Non usiamo afterOpened() per evitare un tick in più: il dialog è già aperto
-        // quando startSteamUpdate() viene chiamato dall'utente.
-        this.steamBulk.run({ onlyErrors: this.onlyErrors() }).then(() => {
-            // Riabilita la chiusura manuale del dialog a operazione completata
+        this.steamBulk.run(this.steamOptions()).then(() => {
             dialogRef.disableClose = false;
         });
+    }
+
+    /** Svuota la colonna error per tutti i giochi del foglio */
+    async clearAllErrors(): Promise<void> {
+        this.clearingErrors.set(true);
+        try {
+            const games = await firstValueFrom(this.sheets.getGames());
+            if (games.length === 0) return;
+            const lastRow = Math.max(...games.map(g => g.rowIndex ?? 2));
+            await firstValueFrom(this.sheets.clearAllErrors(lastRow));
+        } catch (err) {
+            console.error('Errore durante lo svuotamento della colonna errori:', err);
+        } finally {
+            this.clearingErrors.set(false);
+        }
     }
 }

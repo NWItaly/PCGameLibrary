@@ -5,17 +5,18 @@ import { SheetsService } from './sheets.service';
 import { SteamService } from './steam.service';
 import { BulkOperationService } from './bulk-operation.service';
 import { Game } from '../models/game.model';
+import {
+    BulkOperationOptions,
+    pendingMarker,
+    errorMarker,
+    isPendingMarker,
+} from './bulk-operation.types';
 
 /** Millisecondi di attesa tra una chiamata Steam e la successiva */
 const STEAM_THROTTLE_MS = 2000;
-
 /** Numero di giochi per blocco prima del batchUpdate su Sheets */
 const BLOCK_SIZE = 50;
-
-export interface SteamBulkUpdateOptions {
-    /** Se true, elabora solo i giochi che hanno un errore nella colonna error */
-    onlyErrors: boolean;
-}
+const OPERATION_NAME = 'steam-update';
 
 @Injectable({ providedIn: 'root' })
 export class SteamBulkUpdateService {
@@ -27,19 +28,14 @@ export class SteamBulkUpdateService {
     private abortRequested = false;
 
     /**
-     * Avvia l'aggiornamento massivo di tutti i giochi con steamId.
-     * Progresso e risultati vengono scritti direttamente nel BulkOperationService.
-     *
-     * Flusso:
-     * 1. getGames() per ottenere la lista completa
-     * 2. Filtra i giochi con steamId → sono i candidati all'aggiornamento
-     * 3. Itera a blocchi di BLOCK_SIZE:
-     *    a. Per ogni gioco nel blocco: chiamata Steam + throttle
-     *    b. Accumula gli aggiornamenti riusciti
-     *    c. batchUpdate Sheets per l'intero blocco
-     * 4. complete() o fail() sul BulkOperationService
+     * Flusso completo:
+     * 1. Carica tutti i giochi
+     * 2. Applica filtri (range, onlyErrors, riprendi pending esistenti)
+     * 3. Pre-marking: scrive [PENDING:steam-update] su tutti i candidati in una sola chiamata
+     * 4. Elabora a blocchi con throttle Steam
+     * 5. Per ogni record: successo → error='', fallimento → error='[ERROR:steam-update] msg'
      */
-    async run(options: SteamBulkUpdateOptions = { onlyErrors: false }): Promise<void> {
+    async run(options: BulkOperationOptions): Promise<void> {
         this.abortRequested = false;
 
         let games: Game[];
@@ -50,48 +46,79 @@ export class SteamBulkUpdateService {
             return;
         }
 
-        // Giochi senza steamId: sempre saltati indipendentemente dal filtro
-        const withoutSteamId = games.filter(g => !g.steamId?.trim());
+        const marker = pendingMarker(OPERATION_NAME);
 
-        // Candidati: hanno steamId; se onlyErrors=true, solo quelli con errore non vuoto
-        const candidates = games
-            .filter(g => g.steamId?.trim())
-            .filter(g => options.onlyErrors ? g.error?.trim() : true);
+        // Determina i candidati applicando i filtri nell'ordine:
+        // 1. Ha steamId
+        // 2. Rientra nel range righe specificato
+        // 3. Se onlyErrors=true: ha errore non vuoto (inclusi [PENDING] di run precedenti interrotti)
+        //    Se onlyErrors=false: tutti, oppure riprende quelli ancora [PENDING] da run interrotto
+        const candidates = games.filter(g => {
+            if (!g.steamId?.trim()) return false;
 
-        // I giochi con steamId ma senza errore, esclusi dal filtro onlyErrors → saltati
-        const skippedByFilter = options.onlyErrors
-            ? games.filter(g => g.steamId?.trim() && !g.error?.trim())
-            : [];
+            // Filtro range righe
+            if (options.fromRow !== null && g.rowIndex! < options.fromRow) return false;
+            if (options.toRow !== null && g.rowIndex! > options.toRow) return false;
 
-        const total = withoutSteamId.length + skippedByFilter.length + candidates.length;
+            if (options.onlyErrors) {
+                // Ritenta: ha un errore reale o è rimasto pending da un run interrotto
+                return !!g.error?.trim();
+            }
+
+            // Run normale: elabora tutto il range, ma se esistono già pending dello stesso
+            // tipo (run precedente interrotto) riprendi solo quelli invece di ricominciare
+            const hasPendingInRange = games.some(
+                x => x.steamId?.trim() &&
+                    (options.fromRow === null || x.rowIndex! >= options.fromRow) &&
+                    (options.toRow === null || x.rowIndex! <= options.toRow) &&
+                    isPendingMarker(x.error ?? '', OPERATION_NAME)
+            );
+            if (hasPendingInRange) {
+                return isPendingMarker(g.error ?? '', OPERATION_NAME);
+            }
+
+            return true;
+        });
+
+        const withoutSteamId = games.filter(g => {
+            if (g.steamId?.trim()) return false;
+            if (options.fromRow !== null && g.rowIndex! < options.fromRow) return false;
+            if (options.toRow !== null && g.rowIndex! > options.toRow) return false;
+            return true;
+        });
+
+        // Giochi fuori range o esclusi dal filtro: non compaiono nel totale
+        const total = withoutSteamId.length + candidates.length;
         this.bulk.start('Aggiornamento dati Steam', total);
 
-        // Registra saltati per steamId mancante
+        // Registra subito i saltati per steamId mancante
         for (const g of withoutSteamId) {
             this.bulk.recordResult({
-                id: g.id,
-                title: g.title,
-                status: 'skipped',
-                message: 'Nessun Steam ID',
+                id: g.id, title: g.title,
+                status: 'skipped', message: 'Nessun Steam ID',
             });
         }
 
-        // Registra saltati per filtro onlyErrors
-        for (const g of skippedByFilter) {
-            this.bulk.recordResult({
-                id: g.id,
-                title: g.title,
-                status: 'skipped',
-                message: 'Nessun errore precedente',
-            });
+        if (candidates.length === 0) {
+            this.bulk.complete();
+            return;
         }
 
-        // Elabora i candidati a blocchi
+        // Pre-marking: una singola chiamata Sheets per tutti i candidati
+        // Permette di riprendere da dove si era arrivati in caso di interruzione
+        try {
+            await firstValueFrom(this.sheets.markGamesPending(candidates, marker));
+        } catch (err: any) {
+            this.bulk.fail(`Impossibile scrivere i marker pending: ${err?.message ?? err}`);
+            return;
+        }
+
+        // Elaborazione a blocchi
         for (let i = 0; i < candidates.length; i += BLOCK_SIZE) {
             if (this.abortRequested) break;
 
             const block = candidates.slice(i, i + BLOCK_SIZE);
-            const updatedGames: Game[] = [];
+            const toWrite: Game[] = [];
 
             for (const game of block) {
                 if (this.abortRequested) break;
@@ -101,8 +128,7 @@ export class SteamBulkUpdateService {
                         this.steam.loadByAppId(game.steamId!)
                     );
 
-                    // Merge dei campi Steam; azzera l'errore precedente in caso di successo
-                    const updated: Game = {
+                    toWrite.push({
                         ...game,
                         genres: steamData.genres,
                         features: steamData.features,
@@ -111,36 +137,28 @@ export class SteamBulkUpdateService {
                         releaseDate: steamData.releaseDate,
                         image: steamData.image,
                         requiredAge: steamData.requiredAge,
-                        error: '',   // pulizia errore precedente
-                    };
-                    updatedGames.push(updated);
+                        error: '',  // pulizia marker pending e/o errore precedente
+                    });
 
                     this.bulk.recordResult({
-                        id: game.id,
-                        title: game.title,
-                        status: 'success',
+                        id: game.id, title: game.title, status: 'success',
                     });
                 } catch (err: any) {
                     const message = err?.message ?? String(err);
-
-                    // Scrive il messaggio di errore sulla riga del gioco per permettere il retry mirato
-                    const withError: Game = { ...game, error: message };
-                    updatedGames.push(withError);
-
+                    toWrite.push({
+                        ...game,
+                        error: errorMarker(OPERATION_NAME, message),
+                    });
                     this.bulk.recordResult({
-                        id: game.id,
-                        title: game.title,
-                        status: 'error',
-                        message,
+                        id: game.id, title: game.title, status: 'error', message,
                     });
                 }
 
                 await this.delay(STEAM_THROTTLE_MS);
             }
 
-            // Scrittura blocco su Sheets (sia successi che errori, per aggiornare la colonna error)
-            if (updatedGames.length > 0) {
-                await this.writeBlock(updatedGames);
+            if (toWrite.length > 0) {
+                await this.writeBlock(toWrite);
             }
         }
 

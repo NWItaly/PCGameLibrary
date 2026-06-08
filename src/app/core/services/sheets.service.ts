@@ -164,22 +164,52 @@ export class SheetsService {
     );
   }
 
+  /**
+   * Scrive il marker pending nella colonna error di tutti i giochi passati,
+   * in una singola chiamata batchUpdate per minimizzare le richieste API.
+   * Usato prima dell'avvio di un'operazione bulk per marcare i record da elaborare.
+   */
+  markGamesPending(games: Game[], marker: string): Observable<any> {
+    const s = environment.sheetName;
+    const url = `${BASE}/${this.spreadsheetId}/values:batchUpdate`;
+
+    const data = games.map(g => ({
+      range: `${s}!S${g.rowIndex}`,
+      values: [[marker]],
+    }));
+
+    const body = { valueInputOption: 'RAW', data };
+    return this.withValidToken(() =>
+      this.http.post(url, body, { headers: this.headers })
+    );
+  }
+
+  /**
+   * Svuota la colonna error (S) per tutti i giochi del foglio.
+   * Usa un range continuo S2:S{lastRow} per una singola chiamata API.
+   */
+  clearAllErrors(lastRowIndex: number): Observable<any> {
+    const s = environment.sheetName;
+    const url = `${BASE}/${this.spreadsheetId}/values/${s}!S2:S${lastRowIndex}:clear`;
+    return this.withValidToken(() =>
+      this.http.post(url, {}, { headers: this.headers })
+    );
+  }
+
   // ── HELPERS PRIVATI ─────────────────────────────────────────────────────────
 
   /**
-   * Scrive le colonne editabili di un gioco su una riga specifica tramite values:batchUpdate
-   * con range multipli e valueInputOption=USER_ENTERED.
+   * Scrive le colonne editabili di un gioco su una riga specifica.
    *
-   * Range scritti (mappa esplicita colonna → lettera):
    *   A  col 0  id
    *   B  col 1  title
    *   C  col 2  platform
    *   D  col 3  price          → JS number per evitare parsing locale IT
    *   E  col 4  buyDate        → formato ISO "aaaa-mm-gg"
-   *   -- col 5  buyYear        → SALTATA: ARRAYFORMULA calcola ANNO(E)
+   *   -- col 5  buyYear        → SALTATA: ARRAYFORMULA
    *   G  col 6  steamId
-   *   H  col 7  features       → stringa "RPG, FPS"
-   *   I  col 8  genres         → stringa "RPG, FPS"
+   *   H  col 7  features
+   *   I  col 8  genres
    *   J  col 9  italianSupport → "Sì"/"No"
    *   K  col 10 vR             → "Sì"/"No"
    *   L  col 11 releaseDate    → formato ISO "aaaa-mm-gg"

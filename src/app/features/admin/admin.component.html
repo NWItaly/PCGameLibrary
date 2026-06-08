@@ -11,6 +11,7 @@
 
     <mat-divider />
 
+    <!-- Sezione Steam -->
     <section class="admin-section">
         <h2 class="section-title">
             <mat-icon class="section-icon">cloud_sync</mat-icon>
@@ -19,6 +20,7 @@
 
         <div class="cards-grid">
 
+            <!-- Card: Aggiornamento dati Steam -->
             <mat-card class="operation-card">
                 <mat-card-header>
                     <mat-icon mat-card-avatar class="card-avatar-icon">update</mat-icon>
@@ -33,15 +35,11 @@
                     <ul class="card-details">
                         <li>
                             <mat-icon class="detail-icon">schedule</mat-icon>
-                            Tempo stimato: ~2 sec per gioco con Steam ID
+                            ~2 sec per gioco con Steam ID · scrittura ogni 50 giochi
                         </li>
                         <li>
-                            <mat-icon class="detail-icon">layers</mat-icon>
-                            Scrittura su Sheets ogni 50 giochi
-                        </li>
-                        <li>
-                            <mat-icon class="detail-icon">skip_next</mat-icon>
-                            I giochi senza Steam ID vengono saltati automaticamente
+                            <mat-icon class="detail-icon">bookmark</mat-icon>
+                            I record vengono marcati [PENDING] prima dell'avvio — riprende da dove si era interrotto
                         </li>
                         <li>
                             <mat-icon class="detail-icon">error_outline</mat-icon>
@@ -49,26 +47,91 @@
                         </li>
                     </ul>
 
-                    <!-- Toggle ritenta solo errori -->
-                    <div class="card-toggle">
-                        <mat-slide-toggle [checked]="onlyErrors()" (change)="onlyErrors.set($event.checked)"
-                            color="primary">
-                            Ritenta solo i giochi con errori precedenti
-                        </mat-slide-toggle>
-                        @if (onlyErrors()) {
-                        <p class="toggle-hint">
-                            <mat-icon class="hint-icon">info</mat-icon>
-                            Verranno elaborati solo i giochi che hanno un errore nella colonna "Errore" del foglio
-                        </p>
+                    <!-- Riepilogo opzioni attive -->
+                    <div class="options-summary">
+                        @if (steamOptions().onlyErrors) {
+                        <span class="option-badge option-badge--active">
+                            <mat-icon>replay</mat-icon>
+                            Solo errori
+                        </span>
+                        }
+                        @if (steamOptions().fromRow || steamOptions().toRow) {
+                        <span class="option-badge option-badge--active">
+                            <mat-icon>swap_vert</mat-icon>
+                            Righe
+                            {{ steamOptions().fromRow ?? '2' }}
+                            –
+                            {{ steamOptions().toRow ?? 'fine' }}
+                        </span>
+                        }
+                        @if (!steamOptions().onlyErrors && !steamOptions().fromRow && !steamOptions().toRow) {
+                        <span class="option-badge">
+                            <mat-icon>all_inclusive</mat-icon>
+                            Tutti i giochi
+                        </span>
                         }
                     </div>
                 </mat-card-content>
 
-                <mat-card-actions>
+                <mat-card-actions class="card-actions">
+                    <button mat-icon-button (click)="openSteamSettings()" matTooltip="Impostazioni">
+                        <mat-icon>tune</mat-icon>
+                    </button>
                     <button mat-flat-button color="primary" (click)="startSteamUpdate()"
-                        [matTooltip]="onlyErrors() ? 'Ritenta solo i giochi con errori' : 'Aggiorna tutti i giochi con Steam ID'">
-                        <mat-icon>{{ onlyErrors() ? 'replay' : 'play_arrow' }}</mat-icon>
-                        {{ onlyErrors() ? 'Ritenta errori' : 'Avvia' }}
+                        matTooltip="Avvia aggiornamento">
+                        <mat-icon>play_arrow</mat-icon>
+                        Avvia
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+
+        </div>
+    </section>
+
+    <mat-divider />
+
+    <!-- Sezione manutenzione -->
+    <section class="admin-section">
+        <h2 class="section-title">
+            <mat-icon class="section-icon">build</mat-icon>
+            Manutenzione
+        </h2>
+
+        <div class="cards-grid">
+
+            <!-- Card: svuota colonna errori -->
+            <mat-card class="operation-card">
+                <mat-card-header>
+                    <mat-icon mat-card-avatar class="card-avatar-icon card-avatar-icon--warn">
+                        cleaning_services
+                    </mat-icon>
+                    <mat-card-title>Svuota colonna Errore</mat-card-title>
+                    <mat-card-subtitle>
+                        Cancella il contenuto della colonna Errore per tutti i giochi del foglio
+                    </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content class="card-content">
+                    <ul class="card-details">
+                        <li>
+                            <mat-icon class="detail-icon">warning</mat-icon>
+                            L'operazione è irreversibile — usare dopo aver verificato i dati
+                        </li>
+                        <li>
+                            <mat-icon class="detail-icon">info</mat-icon>
+                            Rimuove anche i marker [PENDING] lasciati da operazioni interrotte
+                        </li>
+                    </ul>
+                </mat-card-content>
+
+                <mat-card-actions>
+                    <button mat-stroked-button color="warn" (click)="clearAllErrors()" [disabled]="clearingErrors()">
+                        @if (clearingErrors()) {
+                        <mat-spinner diameter="18" />
+                        } @else {
+                        <mat-icon>delete_sweep</mat-icon>
+                        }
+                        {{ clearingErrors() ? 'Pulizia in corso…' : 'Svuota errori' }}
                     </button>
                 </mat-card-actions>
             </mat-card>

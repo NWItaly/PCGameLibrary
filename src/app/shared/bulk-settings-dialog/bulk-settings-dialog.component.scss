@@ -1,0 +1,114 @@
+// bulk-settings-dialog.component.scss
+
+.dialog-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .dialog-title-icon {
+        color: var(--mat-sys-primary);
+    }
+}
+
+.dialog-content {
+    min-width: 420px;
+    max-width: 520px;
+    padding-top: 8px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+// ── Sezioni ───────────────────────────────────────────────────────────────────
+
+.section-label {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--mat-sys-primary);
+}
+
+.section-hint {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--mat-sys-on-surface-variant);
+}
+
+.section-divider {
+    margin: 4px 0;
+}
+
+// ── Riga opzione toggle ───────────────────────────────────────────────────────
+
+.option-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 0;
+}
+
+.option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.option-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.option-hint {
+    font-size: 0.78rem;
+    color: var(--mat-sys-on-surface-variant);
+}
+
+// ── Range righe ───────────────────────────────────────────────────────────────
+
+.range-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.range-field {
+    flex: 1;
+}
+
+.range-separator {
+    font-size: 1.2rem;
+    color: var(--mat-sys-on-surface-variant);
+    margin-bottom: 20px; // allinea con i form field (che hanno hint sotto)
+}
+
+.range-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--mat-sys-error);
+    margin: 0;
+
+    mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+    }
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+
+.dialog-actions {
+    display: flex;
+    align-items: center;
+    padding: 8px 24px 16px;
+}
+
+.actions-spacer {
+    flex: 1;
+}
