@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PlatformIconComponent } from '../../shared/components/platform-icon/platform-icon.component';
+import { PegiBadgeComponent } from '../../shared/components/pegi-badge/pegi-badge.component';
 import { Game } from '../../core/models/game.model';
 import { TranslateService } from '../../core/services/translate.service';
 import { TranslocoModule } from '@jsverse/transloco';
@@ -17,6 +18,7 @@ import { TranslocoModule } from '@jsverse/transloco';
     MatButtonModule,
     MatTooltipModule,
     PlatformIconComponent,
+    PegiBadgeComponent,
     TranslocoModule,
     
   ],
@@ -68,16 +70,5 @@ export class GameCardComponent {
     const img = event.target as HTMLImageElement;
     img.style.display = 'none';
     img.parentElement?.classList.add('no-image');
-  }
-
-  /**
-   * Restituisce il path del badge PEGI o null se non applicabile.
-   * I valori validi sono '3','7','12','16','18'; '0' e '' non mostrano badge.
-   */
-  pegiBadgeSrc(): string | null {
-    const age = this.game().requiredAge;
-    if (!age || age === '0') return null;
-    const valid = ['3', '7', '12', '16', '18'];
-    return valid.includes(age) ? `assets/pegi/pegi-${age}-50.svg` : null;
   }
 }

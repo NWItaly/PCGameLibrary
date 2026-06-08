@@ -1,0 +1,8 @@
+@if( age() !== undefined && age() !== '' && age() !== '0') {
+<div class="pegi-badge" [class.green]="colorClass() === 'green'" [class.yellow]="colorClass() === 'yellow'"
+    [class.orange]="colorClass() === 'orange'" [class.orange-dark]="colorClass() === 'orange-dark'"
+    [class.red]="colorClass() === 'red'" [style.width.px]="size()" [style.height.px]="size()" [matTooltip]="tooltip()"
+    [attr.aria-label]="tooltip()" [attr.title]="tooltip()">
+    <span class="pegi-number">{{ age() }}</span>
+</div>
+}

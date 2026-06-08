@@ -1,0 +1,8 @@
+@if (iconPath()) {
+<img [src]="iconPath()" [alt]="platform()" [matTooltip]="platform()" class="platform-icon" (error)="onError($event)" />
+} @else {
+<!-- Fallback testuale se la piattaforma non è mappata -->
+<span class="platform-text" [matTooltip]="platform()">
+    {{ platform() }}
+</span>
+}

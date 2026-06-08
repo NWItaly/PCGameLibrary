@@ -26,35 +26,8 @@ const PLATFORM_ICON_MAP: Record<string, string> = {
   selector: 'app-platform-icon',
   standalone: true,
   imports: [CommonModule, MatTooltipModule],
-  template: `
-    @if (iconPath()) {
-      <img
-        [src]="iconPath()"
-        [alt]="platform()"
-        [matTooltip]="platform()"
-        class="platform-icon"
-        (error)="onError($event)"
-      />
-    } @else {
-      <!-- Fallback testuale se la piattaforma non è mappata -->
-      <span class="platform-text" [matTooltip]="platform()">
-        {{ platform() }}
-      </span>
-    }
-  `,
-  styles: [`
-    .platform-icon {
-      width: 20px;
-      height: 20px;
-      object-fit: contain;
-      /* Filtro per adattare le icone al tema corrente */
-      filter: var(--platform-icon-filter, none);
-    }
-    .platform-text {
-      font-size: 11px;
-      opacity: 0.7;
-    }
-  `],
+  templateUrl: './platform-icon.component.html',
+  styleUrl: './platform-icon.component.scss',
 })
 export class PlatformIconComponent {
   readonly platform = input.required<string>();

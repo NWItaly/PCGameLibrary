@@ -1,0 +1,81 @@
+:host {
+    display: inline-block;
+    line-height: 0;
+}
+
+.pegi-badge {
+    --pegi-green: #A4C408;
+    --pegi-yellow: #FABE5D;
+    --pegi-orange: #F5A200;
+    --pegi-orange-dark: #D97A00;
+    --pegi-red: #E2061A;
+    --pegi-text: #FFFFFF;
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-sizing: border-box;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    user-select: none;
+}
+
+.pegi-badge::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    background: var(--pegi-bg);
+    z-index: 0;
+}
+
+.pegi-badge::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    z-index: 1;
+    pointer-events: none;
+    background:
+        linear-gradient(143deg, rgba(255, 255, 255, .22) 0 12%, transparent 12% 100%),
+        linear-gradient(143deg, transparent 0 25%, rgba(255, 255, 255, .18) 25% 33%, transparent 33% 100%),
+        linear-gradient(143deg, transparent 0 42%, rgba(255, 255, 255, .18) 42% 50%, transparent 50% 100%),
+        linear-gradient(143deg, transparent 0 59%, rgba(255, 255, 255, .18) 59% 67%, transparent 67% 100%),
+        linear-gradient(143deg, transparent 0 76%, rgba(255, 255, 255, .18) 76% 84%, transparent 84% 100%);
+}
+
+.pegi-number {
+    position: relative;
+    z-index: 2;
+    color: var(--pegi-text);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: calc(var(--pegi-size, 50px) * 0.48);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1px;
+    transform: translateY(1px);
+}
+
+.pegi-number.double-digit {
+    font-size: calc(var(--pegi-size, 50px) * 0.44);
+    letter-spacing: -1.5px;
+}
+
+.green {
+    --pegi-bg: var(--pegi-green);
+}
+
+.yellow {
+    --pegi-bg: var(--pegi-yellow);
+}
+
+.orange {
+    --pegi-bg: var(--pegi-orange);
+}
+
+.orange-dark {
+    --pegi-bg: var(--pegi-orange-dark);
+}
+
+.red {
+    --pegi-bg: var(--pegi-red);
+}

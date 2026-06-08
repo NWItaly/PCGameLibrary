@@ -1,0 +1,12 @@
+.platform-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    /* Filtro per adattare le icone al tema corrente */
+    filter: var(--platform-icon-filter, none);
+}
+
+.platform-text {
+    font-size: 11px;
+    opacity: 0.7;
+}
