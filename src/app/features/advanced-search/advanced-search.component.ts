@@ -9,7 +9,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@jsverse/transloco';
-import { GameFilters, DEFAULT_FILTERS } from '../../core/models/game-filters.model';
+import { GameFilters } from '../../core/models/game-filters.model';
 
 export interface AdvancedSearchData {
   filters: GameFilters;

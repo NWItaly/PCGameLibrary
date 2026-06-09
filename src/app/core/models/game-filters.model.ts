@@ -27,7 +27,7 @@ export interface GameFilters {
   buyYearMin: number;
   buyYearMax: number;
 
-  // Filtro età minima PEGI — array vuoto = nessun filtro
+  // Filtro età minima — array vuoto = nessun filtro
   requiredAges: number[];
 }
 

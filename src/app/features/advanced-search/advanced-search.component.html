@@ -92,7 +92,7 @@
       <mat-label>{{ 'search.requiredAge' | transloco }}</mat-label>
       <mat-select formControlName="requiredAges" multiple>
         @for (age of data.options.requiredAges; track age) {
-        <mat-option [value]="age">PEGI {{ age }}</mat-option>
+        <mat-option [value]="age">{{ age === 0 ? ('form.requiredAgeAll' | transloco) : ('form.requiredAgeLabel' | transloco:{ age }) }}</mat-option>
         }
       </mat-select>
     </mat-form-field>

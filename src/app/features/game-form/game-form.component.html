@@ -90,12 +90,12 @@
 
     <!-- ── Età minima (PEGI) ───────────────────────────────────────────────── -->
     <mat-form-field appearance="outline">
-      <mat-label>{{ 'form.requiredAgeLabel' | transloco }}</mat-label>
+      <mat-label>{{ 'form.minimumRequiredAgeLabel' | transloco }}</mat-label>
       <mat-select formControlName="requiredAge">
         <mat-option value="">{{ 'form.notSpecified' | transloco }}</mat-option>
-        @for (age of pegiAges; track age) {
+        @for (age of requiredAges; track age) {
         <mat-option [value]="age.toString()">
-          {{ age === 0 ? ('form.pegiAll' | transloco) : ('form.pegiLabel' | transloco:{ age }) }}
+          {{ age === 0 ? ('form.requiredAgeAll' | transloco) : ('form.requiredAgeLabel' | transloco:{ age }) }}
         </mat-option>
         }
       </mat-select>

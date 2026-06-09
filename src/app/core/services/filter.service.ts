@@ -13,6 +13,7 @@ export class FilterService {
 
   // Range reali del dataset — aggiornati dopo il caricamento
   private datasetRanges = signal({
+    requiredAges: DEFAULT_FILTERS.requiredAges,
     priceMin: DEFAULT_FILTERS.priceMin,
     priceMax: DEFAULT_FILTERS.priceMax,
     releaseYearMin: DEFAULT_FILTERS.releaseYearMin,
@@ -24,6 +25,7 @@ export class FilterService {
   // Aggiorna i range reali dopo il caricamento dei giochi
   updateDatasetRanges(opts: ReturnType<typeof this.getDistinctValues>): void {
     this.datasetRanges.set({
+      requiredAges: opts.requiredAges,
       priceMin: opts.priceMin,
       priceMax: opts.priceMax,
       releaseYearMin: opts.releaseYearMin,
@@ -169,6 +171,10 @@ export class FilterService {
       .map((g) => parseInt(g.buyYear ?? '', 10))
       .filter((n) => !isNaN(n));
 
+    const requiredAges = games
+      .map((g) => g.requiredAge ? parseInt(g.requiredAge, 10) : 0)
+      .filter((n) => !isNaN(n) && n >= 0);
+
     return {
       platforms: distinct(games.map((g) => g.platform)),
       genres: distinct(games.flatMap(g => g.genres)),
@@ -176,7 +182,7 @@ export class FilterService {
       statesStefano: distinct(games.map((g) => g.stateStefano)),
       statesErica: distinct(games.map((g) => g.stateErica)),
       statesAlessandro: distinct(games.map((g) => g.stateAlessandro)),
-      requiredAges: [3, 7, 12, 16, 18], // Valori standard PEGI
+      requiredAges: distinct(requiredAges),
       priceMin: prices.length ? Math.floor(Math.min(...prices)) : 0,
       priceMax: prices.length ? Math.ceil(Math.max(...prices)) : 0,
       releaseYearMin: releaseYears.length ? Math.min(...releaseYears) : 1980,

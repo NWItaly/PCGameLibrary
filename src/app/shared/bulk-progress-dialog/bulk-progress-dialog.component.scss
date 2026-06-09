@@ -16,6 +16,10 @@
     padding-top: 8px !important;
 }
 
+mat-expansion-panel:last-of-type {
+    margin-bottom: 2px;
+}
+
 // ── Contatori ────────────────────────────────────────────────────────────────
 
 .counters {

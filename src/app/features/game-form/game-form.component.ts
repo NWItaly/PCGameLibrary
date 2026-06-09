@@ -81,8 +81,8 @@ export const PLATFORMS = [
 /** Valori possibili per lo stato di gioco per ciascun utente */
 export const STATE_OPTIONS = ['Non interessa', 'Da giocare', 'Giocato'] as const;
 
-/** Valori età minima PEGI (0 = nessun limite specificato) */
-export const PEGI_AGES = [0, 3, 7, 12, 16, 18] as const;
+/** Valori età minima (0 = nessun limite specificato) */
+export const REQUIRED_AGES = [...Array.from({ length: 19 }, (_, i) => i)] as const;
 
 @Component({
   selector: 'app-game-form',
@@ -122,7 +122,7 @@ export class GameFormComponent {
   /** Costanti esposte al template */
   readonly platforms = PLATFORMS;
   readonly stateOptions = STATE_OPTIONS;
-  readonly pegiAges = PEGI_AGES;
+  readonly requiredAges = REQUIRED_AGES;
 
   /** True mentre la chiamata al proxy Steam è in corso */
   readonly steamLoading = signal(false);
