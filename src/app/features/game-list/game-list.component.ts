@@ -22,6 +22,7 @@ import { GameCardComponent } from '../game-card/game-card.component';
 import { PlatformIconComponent } from '../../shared/components/platform-icon/platform-icon.component';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
 import { Game } from '../../core/models/game.model';
+import { GameStoreService } from '../../core/services/game-store.service';
 
 export type ViewMode = 'card' | 'table';
 
@@ -59,11 +60,12 @@ export class GameListComponent {
   private dialog = inject(MatDialog);
   private snackbar = inject(MatSnackBar);
   private translate = inject(TranslateService);
+  private store = inject(GameStoreService);
   readonly auth = inject(AuthService);
   readonly filterService = inject(FilterService);
 
-  games = signal<Game[]>([]);
-  loading = signal(false);
+  readonly games = this.store.games;
+  readonly loading = this.store.loading;
   viewMode = signal<ViewMode>('card');
 
   // Stato ordinamento
@@ -118,15 +120,30 @@ export class GameListComponent {
   );
 
   constructor() {
-    // Ricarica i giochi al ripristino della sessione
+    // Aggiorna FilterService quando i giochi cambiano nel store
+    effect(() => {
+      const data = this.store.games();
+      if (data.length === 0) return;
+      untracked(() => {
+        const opts = this.filterService.getDistinctValues(data);
+        this.filterService.updateDatasetRanges(opts);
+        this.filterService.update({
+          priceMin: opts.priceMin,
+          priceMax: opts.priceMax,
+          releaseYearMin: opts.releaseYearMin,
+          releaseYearMax: opts.releaseYearMax,
+          buyYearMin: opts.buyYearMin,
+          buyYearMax: opts.buyYearMax,
+        });
+      });
+    });
+
+    // Avvia il caricamento al login / svuota al logout
     effect(() => {
       const loggedIn = this.auth.isLoggedIn();
       untracked(() => {
-        if (loggedIn) {
-          this.loadGames();
-        } else {
-          this.games.set([]);
-        }
+        if (loggedIn) this.store.load();
+        else this.store.clear();
       });
     });
   }
@@ -202,7 +219,7 @@ export class GameListComponent {
       this.sheets.addGame(result).subscribe({
         next: () => {
           this.snackbar.open(this.translate.t('success.added'), undefined, { duration: 2500 });
-          this.loadGames();
+          this.store.reload();
         },
         error: () => this.snackbar.open(this.translate.t('errors.addFailed'), 'OK', { duration: 4000 }),
       });
@@ -216,7 +233,7 @@ export class GameListComponent {
       this.sheets.updateGame({ ...game, ...result }).subscribe({
         next: () => {
           this.snackbar.open(this.translate.t('success.updated'), undefined, { duration: 2500 });
-          this.loadGames();
+          this.store.reload();
         },
         error: () => this.snackbar.open(this.translate.t('errors.editFailed'), 'OK', { duration: 4000 }),
       });
@@ -229,7 +246,7 @@ export class GameListComponent {
     this.sheets.deleteGame(game.rowIndex!).subscribe({
       next: () => {
         this.snackbar.open(this.translate.t('success.deleted'), undefined, { duration: 2500 });
-        this.loadGames();
+        this.store.reload();
       },
       error: () => this.snackbar.open(this.translate.t('errors.deleteFailed'), 'OK', { duration: 4000 }),
     });

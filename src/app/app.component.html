@@ -3,7 +3,7 @@
   <!-- Sidenav laterale -->
   <mat-sidenav #sidenav mode="over" position="start" class="app-sidenav">
     <div class="sidenav-content">
-      
+
       <!-- Home -->
       <div class="sidenav-section">
         <a mat-button routerLink="/" (click)="sidenav.close()">
@@ -12,6 +12,7 @@
         </a>
       </div>
 
+      @if (auth.isLoggedIn()) {
       <!-- Link operazioni massive (solo admin) -->
       <div class="sidenav-section">
         <a mat-button routerLink="/admin" (click)="sidenav.close()">
@@ -19,6 +20,7 @@
           Operazioni massive
         </a>
       </div>
+      }
 
       <!-- Link privacy -->
       <div class="sidenav-section">
