@@ -1,6 +1,7 @@
 {
   "nav": {
     "title": "Libreria Giochi",
+    "stats": "Statistiche",
     "privacy": "Privacy Policy",
     "menu": "Menu"
   },
@@ -121,8 +122,19 @@
     "no": "No",
     "apply": "Applica",
     "reset": "Reset"
-  }
-  ,
+  },
+  "stats": {
+    "totalGames": "Giochi totali",
+    "totalSpend": "Spesa totale",
+    "italianSupport": "Con italiano",
+    "vr": "Con VR",
+    "byPlatform": "Per piattaforma",
+    "byRating": "Valutazioni",
+    "byYear": "Acquisti per anno",
+    "byGenre": "Per genere",
+    "stateOf": "Stato di",
+    "byFeature": "Per feature"
+  },
   "privacy": {
     "title": "Privacy Policy",
     "introTitle": "Introduzione",

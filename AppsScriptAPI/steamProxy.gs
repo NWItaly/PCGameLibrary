@@ -1,8 +1,3 @@
-// steamProxy.gs
-// Invocato tramite Apps Script Execution API:
-//   POST https://script.googleapis.com/v1/scripts/{deploymentId}:run
-// Body: { "function": "getSteamData", "parameters": ["1091500"] }
-
 /**
  * Punto di ingresso chiamato dall'Execution API.
  * Restituisce il JSON grezzo di Steam per l'appId richiesto.
@@ -15,8 +10,9 @@ function getSteamData(appId) {
   if (!appId || isNaN(parseInt(appId))) {
     throw new Error('Parametro appId mancante o non valido');
   }
+  console.log(`appId: ${appId}`);
 
-  const url = 'https://store.steampowered.com/api/appdetails?appids=' + appId;
+  const url = 'https://store.steampowered.com/api/appdetails?cc=it&l=italian&appids=' + appId;
   const response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
 
   if (response.getResponseCode() !== 200) {
@@ -28,7 +24,10 @@ function getSteamData(appId) {
 
   if (!gameData?.success || !gameData?.data) {
     throw new Error('Nessun dato trovato per appId ' + appId);
+  } else {
+    console.info(json);
   }
+  
 
   return gameData.data;
 }

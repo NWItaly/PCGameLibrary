@@ -27,7 +27,8 @@
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0",
-    "@jsverse/transloco": "^7.0.0"
+    "@jsverse/transloco": "^7.0.0",
+    "chart.js": "^4.4.9"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.0.0",

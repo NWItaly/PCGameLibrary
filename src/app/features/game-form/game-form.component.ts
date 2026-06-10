@@ -30,6 +30,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Game, GameFormData } from '../../core/models/game.model';
 import { SteamService } from '../../core/services/steam.service';
 import { TranslateService } from '../../core/services/translate.service';
+import { REQUIRED_AGES, STATE_OPTIONS } from '../../core/models/game.model';
 
 /**
  * Adapter personalizzato che risolve il falso errore `matDatepickerParse` con locale it-IT.
@@ -77,12 +78,6 @@ export const PLATFORMS = [
   'Legacy Games', 'Microsoft Store', 'Origin/EA', 'Ubisoft',
   'Riot', 'Meta', 'Xbox', 'Battle.Net', 'CD/DVD', 'Download',
 ] as const;
-
-/** Valori possibili per lo stato di gioco per ciascun utente */
-export const STATE_OPTIONS = ['Non interessa', 'Da giocare', 'Giocato'] as const;
-
-/** Valori età minima (0 = nessun limite specificato) */
-export const REQUIRED_AGES = [...Array.from({ length: 19 }, (_, i) => i)] as const;
 
 @Component({
   selector: 'app-game-form',

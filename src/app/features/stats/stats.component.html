@@ -1,0 +1,76 @@
+<!-- stats.component.html -->
+<div class="stats-container">
+
+    <h1 class="stats-title">{{ 'nav.stats' | transloco }}</h1>
+
+    @if (loading()) {
+    <div class="stats-spinner">
+        <mat-spinner diameter="48" />
+    </div>
+    } @else if (stats()) {
+    @if (stats(); as s) {
+
+    <!-- Totali -->
+    <div class="stats-summary">
+        <div class="summary-card">
+            <span class="summary-value">{{ s.totalGames }}</span>
+            <span class="summary-label">{{ 'stats.totalGames' | transloco }}</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-value">{{ s.totalSpend | number:'1.2-2' }} €</span>
+            <span class="summary-label">{{ 'stats.totalSpend' | transloco }}</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-value">{{ s.italianSupport }}</span>
+            <span class="summary-label">{{ 'stats.italianSupport' | transloco }}</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-value">{{ s.vr }}</span>
+            <span class="summary-label">{{ 'stats.vr' | transloco }}</span>
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stats-card stats-card--half">
+            <h2 class="card-title">{{ 'stats.byPlatform' | transloco }}</h2>
+            <app-platform-chart [data]="s.platforms" />
+        </div>
+        <div class="stats-card stats-card--half">
+            <h2 class="card-title">{{ 'stats.byRating' | transloco }}</h2>
+            <app-rating-chart [data]="s.ratings" />
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stats-card stats-card--full">
+            <h2 class="card-title">{{ 'stats.byYear' | transloco }}</h2>
+            <app-yearly-chart [data]="s.yearly" />
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stats-card stats-card--full">
+            <h2 class="card-title">{{ 'stats.byGenre' | transloco }}</h2>
+            <app-genre-chart [data]="s.genres" />
+        </div>
+    </div>
+
+    <div class="stats-row">
+        @for (person of s.personStates; track person.person) {
+        <div class="stats-card stats-card--third">
+            <h2 class="card-title">{{ 'stats.stateOf' | transloco }} {{ person.person }}</h2>
+            <app-state-counter [data]="person.states" />
+        </div>
+        }
+    </div>
+
+    <div class="stats-row">
+        <div class="stats-card stats-card--full">
+            <h2 class="card-title">{{ 'stats.byFeature' | transloco }}</h2>
+            <app-feature-counter [data]="s.features" />
+        </div>
+    </div>
+    
+    }
+    }
+</div>

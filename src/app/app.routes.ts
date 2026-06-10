@@ -4,6 +4,12 @@ import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'stats',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/stats/stats.component').then(m => m.StatsComponent)
+  },
+  {
     path: 'privacy',
     loadComponent: () =>
       import('./features/privacy/privacy.component').then(m => m.PrivacyComponent)

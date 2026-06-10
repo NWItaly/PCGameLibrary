@@ -12,6 +12,13 @@
         </a>
       </div>
 
+      <div class="sidenav-section">
+        <a mat-button routerLink="/stats" (click)="sidenav.close()">
+          <mat-icon>bar_chart</mat-icon>
+          {{ 'nav.stats' | transloco }}
+        </a>
+      </div>
+
       @if (auth.isLoggedIn()) {
       <!-- Link operazioni massive (solo admin) -->
       <div class="sidenav-section">

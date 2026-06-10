@@ -72,3 +72,9 @@ export type SheetRow = string[];
 export function col(row: SheetRow, index: number): string {
   return row[index]?.trim() ?? '';
 }
+
+/** Valori possibili per lo stato di gioco per ciascun utente */
+export const STATE_OPTIONS = ['Non interessa', 'Da giocare', 'Giocato'] as const;
+
+/** Valori età minima (0 = nessun limite specificato) */
+export const REQUIRED_AGES = [...Array.from({ length: 19 }, (_, i) => i)] as const;
