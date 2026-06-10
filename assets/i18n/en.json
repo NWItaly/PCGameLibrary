@@ -1,6 +1,7 @@
 {
   "nav": {
     "title": "Game Library",
+    "stats": "Stats",
     "privacy": "Privacy Policy",
     "menu": "Menu"
   },
@@ -58,10 +59,10 @@
     "loadFromSteam": "Load from Steam",
     "rating": "Rating",
     "clearRating": "Remove rating",
-    "requiredAgeLabel": "Minimum age (PEGI)",
+    "minimumRequiredAgeLabel": "Minimum age",
     "notSpecified": "— Not specified —",
-    "pegiAll": "All (PEGI 3)",
-    "pegiLabel": "PEGI {{ age }}",
+    "requiredAgeAll": "For all",
+    "requiredAgeLabel": "{{ age }} years",
     "steamDataReadOnly": "Steam data (read only)",
     "cover": "Cover",
     "italianSupportTooltip": "Italian language: {{ value }}",
@@ -121,6 +122,18 @@
     "no": "No",
     "apply": "Apply",
     "reset": "Reset"
+  },
+  "stats": {
+    "totalGames": "Total games",
+    "totalSpend": "Total spent",
+    "italianSupport": "With Italian support",
+    "vr": "With VR",
+    "byPlatform": "By platform",
+    "byRating": "Ratings",
+    "byYear": "Purchases by year",
+    "byGenre": "By genre",
+    "stateOf": "State of",
+    "byFeature": "By feature"
   },
   "privacy": {
     "title": "Privacy Policy",

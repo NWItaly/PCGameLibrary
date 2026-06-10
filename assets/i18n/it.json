@@ -1,6 +1,7 @@
 {
   "nav": {
     "title": "Libreria Giochi",
+    "stats": "Statistiche",
     "privacy": "Privacy Policy",
     "menu": "Menu"
   },
@@ -58,10 +59,10 @@
     "loadFromSteam": "Carica da Steam",
     "rating": "Voto",
     "clearRating": "Rimuovi valutazione",
-    "requiredAgeLabel": "Età minima (PEGI)",
+    "minimumRequiredAgeLabel": "Età minima",
     "notSpecified": "— Non specificata —",
-    "pegiAll": "Tutti (PEGI 3)",
-    "pegiLabel": "PEGI {{ age }}",
+    "requiredAgeAll": "Per tutti",
+    "requiredAgeLabel": "{{ age }} anni",
     "steamDataReadOnly": "Dati Steam (sola lettura)",
     "cover": "Copertina",
     "italianSupportTooltip": "Lingua italiana: {{ value }}",
@@ -121,8 +122,19 @@
     "no": "No",
     "apply": "Applica",
     "reset": "Reset"
-  }
-  ,
+  },
+  "stats": {
+    "totalGames": "Giochi totali",
+    "totalSpend": "Spesa totale",
+    "italianSupport": "Con italiano",
+    "vr": "Con VR",
+    "byPlatform": "Per piattaforma",
+    "byRating": "Valutazioni",
+    "byYear": "Acquisti per anno",
+    "byGenre": "Per genere",
+    "stateOf": "Stato di",
+    "byFeature": "Per feature"
+  },
   "privacy": {
     "title": "Privacy Policy",
     "introTitle": "Introduzione",
