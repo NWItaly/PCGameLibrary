@@ -162,7 +162,7 @@
           @if (steamFields.releaseDate) {
           <span class="meta-item" [matTooltip]="'form.releaseDateTooltip' | transloco">
             <mat-icon>event</mat-icon>
-            {{ steamFields.releaseDate }}
+            {{ steamFields.releaseDate | date:'dd/MM/yyyy' }}
           </span>
           }
         </div>

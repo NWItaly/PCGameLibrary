@@ -32,13 +32,13 @@
       <span class="meta-year">{{ releaseYear() }}</span>
       }
 
-      @if (game().rating) {
+      @if (ratingStars()) {
       <span class="meta-rating">
         {{ ratingStars() }}
       </span>
       }
 
-      @if (game().price) {
+      @if (prizeFormatted()) {
       <span class="meta-price">{{ prizeFormatted() }}</span>
       }
     </div>

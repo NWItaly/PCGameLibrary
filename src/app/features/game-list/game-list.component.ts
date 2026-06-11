@@ -23,6 +23,7 @@ import { PlatformIconComponent } from '../../shared/components/platform-icon/pla
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
 import { Game } from '../../core/models/game.model';
 import { GameStoreService } from '../../core/services/game-store.service';
+import { DatePipe } from '@angular/common';
 
 export type ViewMode = 'card' | 'table';
 
@@ -49,6 +50,7 @@ export type SortDir = 'asc' | 'desc';
     MatTooltipModule,
     MatBadgeModule,
     TranslocoModule,
+    DatePipe,
     GameCardComponent,
     PlatformIconComponent,
   ],
@@ -265,15 +267,12 @@ export class GameListComponent {
     switch (field) {
       case 'title':
         return (game.title ?? '').toLowerCase();
-
       case 'requiredAge':
         return parseFloat(game.requiredAge ?? '') || 0;
-
       case 'releaseDate':
-        return this.dateToISO(game.releaseDate);
-
+        return game.releaseDate ?? '';
       case 'buyDate':
-        return this.dateToISO(game.buyDate);
+        return game.buyDate ?? '';
     }
   }
 

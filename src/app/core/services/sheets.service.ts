@@ -89,7 +89,7 @@ export class SheetsService {
               genres: splitMapFilter(r[SHEET_COLUMNS.genres]),
               italianSupport: str(r[SHEET_COLUMNS.italianSupport]) === 'Sì',
               vR: str(r[SHEET_COLUMNS.vR]) === 'Sì',
-              releaseDate: str(r[SHEET_COLUMNS.releaseDate]),
+              releaseDate: this.fromSheetsSerial(r[SHEET_COLUMNS.releaseDate]),
               stateStefano: str(r[SHEET_COLUMNS.stateStefano]),
               stateErica: str(r[SHEET_COLUMNS.stateErica]),
               stateAlessandro: str(r[SHEET_COLUMNS.stateAlessandro]),
@@ -293,25 +293,31 @@ export class SheetsService {
   }
 
   /**
-   * Converte un valore data letto con UNFORMATTED_VALUE in stringa "gg/mm/aaaa".
+   * Converte un valore data letto con UNFORMATTED_VALUE in stringa ISO
    *
    * - number: seriale Sheets (giorni da 30/12/1899) → converte in data italiana
    * - string: data già testuale (righe pre-esistenti salvate come testo) → restituisce as-is
    * - null/undefined/0/'': stringa vuota
    *
-   * Usa Date.UTC per evitare shift da fuso orario nel calcolo.
    */
   private fromSheetsSerial(value: any): string {
     if (!value) return '';
     if (typeof value === 'number') {
       const EPOCH = Date.UTC(1899, 11, 30);
       const d = new Date(EPOCH + value * 86_400_000);
-      const day = String(d.getUTCDate()).padStart(2, '0');
-      const month = String(d.getUTCMonth() + 1).padStart(2, '0');
       const year = d.getUTCFullYear();
-      return `${day}/${month}/${year}`;
+      const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(d.getUTCDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     }
-    return String(value); // stringa preesistente (testo data già in formato gg/mm/aaaa)
+    const s = String(value);
+    // stringa preesistente in formato gg/mm/aaaa → converti in ISO
+    const match = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (match) {
+      const [, d, m, y] = match;
+      return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+    }
+    return s; // già ISO o non riconosciuto
   }
 
 
@@ -331,21 +337,8 @@ export class SheetsService {
     return isNaN(n) ? '' : n;
   }
 
-  /**
-   * Converte una stringa gg/mm/aaaa nel formato ISO aaaa-mm-gg.
-   *
-   * Il formato ISO è l'unico riconosciuto da Sheets con USER_ENTERED in qualsiasi
-   * locale del foglio (IT, EN-US, ecc.), garantendo che la cella venga salvata come
-   * tipo "Data" senza apostrofo e senza dipendere dalla locale del foglio.
-   * Restituisce '' se la stringa non è nel formato atteso.
-   */
   private toISODate(dateStr: string | undefined): string {
-    if (!dateStr) return '';
-    const [d, m, y] = dateStr.split('/').map(Number);
-    if (!d || !m || !y) return '';
-    // Padding a due cifre per rispettare il formato ISO 8601
-    const mm = String(m).padStart(2, '0');
-    const dd = String(d).padStart(2, '0');
-    return `${y}-${mm}-${dd}`;
-  }
+  if (!dateStr) return '';
+  return /^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr : '';
+}
 }

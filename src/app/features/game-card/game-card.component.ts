@@ -20,7 +20,7 @@ import { TranslocoModule } from '@jsverse/transloco';
     PlatformIconComponent,
     PegiBadgeComponent,
     TranslocoModule,
-    
+
   ],
   templateUrl: './game-card.component.html',
   styleUrl: './game-card.component.scss',
@@ -36,11 +36,10 @@ export class GameCardComponent {
   readonly editClicked = output<Game>();
   readonly deleteClicked = output<Game>();
 
-  // Estrae l'anno dalla data di rilascio (formato atteso: YYYY o DD/MM/YYYY)
+  // Estrae l'anno dalla data di rilascio (formato atteso: YYYY o ISO)
   releaseYear(): string {
     const d = this.game().releaseDate;
-    if (!d) return '';
-    return d.length >= 4 ? d.substring(6, 10) : d;
+    return d && d.length >= 4 ? d.substring(0, 4) : '';
   }
 
   ratingStars(): string {
@@ -64,7 +63,7 @@ export class GameCardComponent {
     const match = raw.match(/=IMAGE\("([^"]+)"\)/i);
     return match ? match[1] : raw;
   }
-  
+
   // Fallback se l'immagine non è disponibile
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;

@@ -123,16 +123,27 @@ export class SteamService {
   }
 
   /**
-   * Converte la data inglese di Steam (es. "Feb 9, 2016") in formato italiano gg/mm/aaaa.
+   * Converte la data inglese di Steam (es. "Feb 9, 2016") in formato ISO.
    * Restituisce stringa vuota se non parsabile.
    */
   private convertDate(dateString: string | undefined): string {
     if (!dateString) return '';
+
+    const months: Record<string, string> = {
+      jan: '01', feb: '02', mar: '03', apr: '04', may: '05', jun: '06',
+      jul: '07', aug: '08', sep: '09', oct: '10', nov: '11', dec: '12',
+      gen: '01', mag: '05', giu: '06', lug: '07', ago: '08', set: '09', ott: '10', dic: '12',
+    };
+
+    const match = dateString.match(/(\d{1,2})\s+([a-zA-Zà-ù]{3})[a-zà-ù.]*,?\s+(\d{4})/i);
+    if (match) {
+      const [, day, monKey, year] = match;
+      const mm = months[monKey.toLowerCase()];
+      if (mm) return `${year}-${mm}-${day.padStart(2, '0')}`;
+    }
+
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString; // restituisce as-is se non parsabile
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    if (isNaN(date.getTime())) return '';
+    return date.toISOString().substring(0, 10);
   }
 }

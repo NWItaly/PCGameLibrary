@@ -31,6 +31,7 @@ import { Game, GameFormData } from '../../core/models/game.model';
 import { SteamService } from '../../core/services/steam.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { REQUIRED_AGES, STATE_OPTIONS } from '../../core/models/game.model';
+import { DatePipe } from '@angular/common';
 
 /**
  * Adapter personalizzato che risolve il falso errore `matDatepickerParse` con locale it-IT.
@@ -95,6 +96,7 @@ export const PLATFORMS = [
     MatTooltipModule,
     MatProgressSpinnerModule,
     TranslocoModule,
+    DatePipe,
   ],
   providers: [
     // ItalianDateAdapter risolve il parse() di NativeDateAdapter con locale it-IT.
@@ -276,38 +278,18 @@ export class GameFormComponent {
     this.dialogRef.close(result);
   }
 
-  /**
-   * Converte la stringa data letta dal foglio in oggetto Date per il datepicker.
-   * Gestisce due formati:
-   * - gg/mm/aaaa: formato italiano prodotto da FORMATTED_VALUE quando la cella è di tipo Data
-   * - aaaa-mm-gg: formato ISO, come fallback (es. se la cella viene letta come testo)
-   */
   private parseBuyDate(dateStr: string | undefined): Date | null {
     if (!dateStr) return null;
-
-    if (dateStr.includes('/')) {
-      // Formato italiano gg/mm/aaaa
-      const [day, month, year] = dateStr.split('/').map(Number);
-      if (day && month && year) return new Date(year, month - 1, day);
-    }
-
-    if (dateStr.includes('-')) {
-      // Formato ISO aaaa-mm-gg
-      const d = new Date(dateStr + 'T00:00:00'); // T00:00:00 evita shift da fuso orario
-      if (!isNaN(d.getTime())) return d;
-    }
-
-    return null;
+    const d = new Date(dateStr + 'T00:00:00');
+    return isNaN(d.getTime()) ? null : d;
   }
 
-  /** Formatta una Date in stringa italiana gg/mm/aaaa */
   private formatDate(date: Date | null): string {
     if (!date) return '';
-    return date.toLocaleDateString('it-IT', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 
   /**
