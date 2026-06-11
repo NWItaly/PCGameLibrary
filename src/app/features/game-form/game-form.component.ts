@@ -17,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
@@ -31,7 +32,6 @@ import { Game, GameFormData } from '../../core/models/game.model';
 import { SteamService } from '../../core/services/steam.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { REQUIRED_AGES, STATE_OPTIONS } from '../../core/models/game.model';
-import { DatePipe } from '@angular/common';
 
 /**
  * Adapter personalizzato che risolve il falso errore `matDatepickerParse` con locale it-IT.
@@ -91,12 +91,12 @@ export const PLATFORMS = [
     MatButtonModule,
     MatSelectModule,
     MatDatepickerModule,
+    MatCheckboxModule,
     MatChipsModule,
     MatIconModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
     TranslocoModule,
-    DatePipe,
   ],
   providers: [
     // ItalianDateAdapter risolve il parse() di NativeDateAdapter con locale it-IT.
@@ -164,17 +164,21 @@ export class GameFormComponent {
    */
   form = this.fb.nonNullable.group({
     title: [this.data?.title ?? '', Validators.required],
-    platform: [this.data?.platform ?? ''],
-    price: [this.data?.price ?? ''],
-    buyDate: new FormControl<Date | null>(this.parseBuyDate(this.data?.buyDate)),
+    platform: [this.data?.platform ?? '', Validators.required],
+    price: [this.data?.price ?? 0, Validators.required],
+    buyDate: new FormControl<Date | null>(this.parseDate(this.data?.buyDate) ?? new Date()),
     steamId: [this.data?.steamId ?? ''],
     stateStefano: [this.data?.stateStefano ?? 'Non interessa'],
     stateErica: [this.data?.stateErica ?? 'Non interessa'],
     stateAlessandro: [this.data?.stateAlessandro ?? 'Non interessa'],
     // Memorizzato come stringa "1"–"5"; il service lo scrive come number per la smart chip
     rating: [this.data?.rating ?? ''],
-    // Età minima PEGI: '' = non specificata, altrimenti '0'|'3'|'7'|'12'|'16'|'18'
+    // Età minima: '' = non specificata
     requiredAge: [this.data?.requiredAge ?? ''],
+    releaseDate: new FormControl<Date | null>(this.parseDate(this.data?.releaseDate)),
+    italianSupport: [this.data?.italianSupport ?? false],
+    vR: [this.data?.vR ?? false],
+    image: [this.data?.image ?? ''],
   });
 
   /** Valore numerico della valutazione corrente (0 = non impostata) */
@@ -231,10 +235,14 @@ export class GameFormComponent {
           releaseDate: data.releaseDate,
           image: data.image,
         };
-        // Aggiorna anche il campo title nel form con il titolo normalizzato
-        this.form.controls.title.setValue(normalizedTitle);
-        // requiredAge va nel form (editabile), non in steamFields
-        this.form.controls.requiredAge.setValue(data.requiredAge ?? '');
+        this.form.patchValue({
+          title: normalizedTitle,
+          requiredAge: data.requiredAge ?? '',
+          releaseDate: this.parseDate(data.releaseDate),
+          italianSupport: data.italianSupport,
+          vR: data.vR,
+          image: data.image,
+        });
         this.steamLoading.set(false);
         this.setSteamBtnFeedback('success');
       },
@@ -269,16 +277,16 @@ export class GameFormComponent {
       requiredAge: raw.requiredAge,
       features: this.steamFields.features,
       genres: this.steamFields.genres,
-      italianSupport: this.steamFields.italianSupport,
-      vR: this.steamFields.vR,
-      releaseDate: this.steamFields.releaseDate,
-      image: this.steamFields.image,
+      italianSupport: raw.italianSupport,
+      vR: raw.vR,
+      releaseDate: this.formatDate(raw.releaseDate),
+      image: raw.image,
     };
 
     this.dialogRef.close(result);
   }
 
-  private parseBuyDate(dateStr: string | undefined): Date | null {
+  private parseDate(dateStr: string | undefined): Date | null {
     if (!dateStr) return null;
     const d = new Date(dateStr + 'T00:00:00');
     return isNaN(d.getTime()) ? null : d;

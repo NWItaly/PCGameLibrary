@@ -34,7 +34,7 @@ export class StatsService {
   // ── PRIVATI ────────────────────────────────────────────────────────────────
 
   private computeTotalSpend(games: Game[]): number {
-    return games.reduce((sum, g) => sum + this.parsePrice(g.price), 0);
+    return games.reduce((sum, g) => sum + (g.price ?? 0), 0);
   }
 
   private computePlatforms(games: Game[]): PlatformStat[] {
@@ -67,7 +67,7 @@ export class StatsService {
 
     for (const g of games) {
       const year = g.buyYear?.trim() || 'N.D.';
-      const price = this.parsePrice(g.price);
+      const price = g.price ?? 0;
       if (!map.has(year)) map.set(year, { count: 0, prices: [] });
       const entry = map.get(year)!;
       entry.count++;
@@ -164,12 +164,4 @@ export class StatsService {
       .sort((a, b) => a.star - b.star);
   }
 
-  // ── UTILITY ────────────────────────────────────────────────────────────────
-
-  /** Converte la stringa prezzo (già normalizzata da SheetsService) in number */
-  private parsePrice(price: string | undefined): number {
-    if (!price) return 0;
-    const n = parseFloat(price.replace(',', '.'));
-    return isNaN(n) ? 0 : n;
-  }
 }

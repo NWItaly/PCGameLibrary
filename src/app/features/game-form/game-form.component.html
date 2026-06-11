@@ -4,10 +4,17 @@
 <mat-dialog-content>
   <form [formGroup]="form" class="form-grid">
 
+    @if (form.controls.image.value) {
+      <div class="full-width image-preview">
+        <img [src]="form.controls.image.value"
+          [alt]="('form.cover' | transloco) + ' ' + form.controls.title.value" style="margin-bottom: 14px;margin-left:5px;" />
+      </div>
+    }
+
     <!-- ── Titolo ──────────────────────────────────────────────────────────── -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>{{ 'form.title' | transloco }}</mat-label>
-      <input matInput formControlName="title" placeholder="{{ 'form.titlePlaceholder' | transloco }}" />
+      <input matInput formControlName=" title" placeholder="{{ 'form.titlePlaceholder' | transloco }}" />
       @if (form.controls.title.hasError('required') && form.controls.title.touched) {
       <mat-error>{{ 'form.required' | transloco }}</mat-error>
       }
@@ -131,44 +138,31 @@
       </mat-form-field>
     </div>
 
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'form.imageUrl' | transloco }}</mat-label>
+      <input matInput formControlName="image" />
+    </mat-form-field>
+
+    <div class="steam-cover-row full-width">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'form.releaseDateLabel' | transloco }}</mat-label>
+        <input matInput [matDatepicker]="releasePicker" formControlName="releaseDate" />
+        <mat-datepicker-toggle matIconSuffix [for]="releasePicker" />
+        <mat-datepicker #releasePicker startView="multi-year" />
+      </mat-form-field>
+
+      <mat-checkbox formControlName="italianSupport">
+        {{ 'form.italianSupport' | transloco }}
+      </mat-checkbox>
+
+      <mat-checkbox formControlName="vR">
+        {{ 'form.vrSupport' | transloco }}
+      </mat-checkbox>
+    </div>
+
     <!-- ── Sezione Steam — sola lettura, visibile dopo fetch o in modifica ── -->
     @if (isEditMode || steamFields.image || steamFields.genres.length) {
     <div class="steam-section full-width">
-      <div class="section-title">
-        <mat-icon>sports_esports</mat-icon>
-        {{ 'form.steamDataReadOnly' | transloco }}
-      </div>
-
-      <!-- Copertina + metadati affiancati -->
-      <div class="steam-cover-row">
-        @if (steamFields.image) {
-        <img class="steam-cover" [src]="steamFields.image"
-          [alt]="('form.cover' | transloco) + ' ' + form.controls.title.value" />
-        }
-        <div class="steam-meta">
-          @if (steamFields.italianSupport) {
-          <span class="meta-item"
-            [matTooltip]="translate.t('form.italianSupportTooltip', { value: translate.t(`search.${steamFields.italianSupport ? 'yes' : 'no'}`) })">
-            <mat-icon>translate</mat-icon>
-            {{ steamFields.italianSupport ? ('search.yes' | transloco) : ('search.no' | transloco) }}
-          </span>
-          }
-          @if (steamFields.vR) {
-          <span class="meta-item" [matTooltip]="translate.t('form.vrSupportTooltip', { value: steamFields.vR })">
-            <mat-icon>head_mounted_device</mat-icon>
-            {{ steamFields.vR ? ('search.yes' | transloco) : ('search.no' | transloco) }}
-          </span>
-          }
-          @if (steamFields.releaseDate) {
-          <span class="meta-item" [matTooltip]="'form.releaseDateTooltip' | transloco">
-            <mat-icon>event</mat-icon>
-            {{ steamFields.releaseDate | date:'dd/MM/yyyy' }}
-          </span>
-          }
-        </div>
-      </div>
-
-      <!-- Generi con chip -->
       @if (steamFields.genres.length) {
       <div class="chip-group">
         <span class="chip-group-label">{{ 'form.genres' | transloco }}</span>
@@ -180,7 +174,6 @@
       </div>
       }
 
-      <!-- Feature con chip -->
       @if (steamFields.features.length) {
       <div class="chip-group">
         <span class="chip-group-label">{{ 'form.features' | transloco }}</span>
@@ -191,7 +184,6 @@
         </mat-chip-set>
       </div>
       }
-
     </div>
     }
 

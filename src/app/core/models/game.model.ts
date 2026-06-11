@@ -5,7 +5,7 @@ export interface Game {
   id: string;
   title: string;
   platform?: string;
-  price?: string;
+  price?: number;
   buyDate?: string;
   buyYear?: string;        // calcolata dal foglio (ANNO(buyDate)) — non scrivere
   steamId?: string;

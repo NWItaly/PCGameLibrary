@@ -119,22 +119,6 @@
     }
   }
 
-  // Riga copertina + metadati affiancati
-  .steam-cover-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  .steam-cover {
-    display: block;
-    width: 184px; // Dimensione fissa: header capsule Steam 460×215 → metà
-    flex-shrink: 0;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-
   .chip-group {
     margin-bottom: 12px;
 

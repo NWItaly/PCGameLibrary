@@ -55,9 +55,11 @@ export class SheetsService {
     const str = (v: any): string => (v == null ? '' : String(v));
 
     // Prezzo: number → "29.99"; stringa con simboli → "29.99" (retrocompatibilità)
-    const cleanPrice = (v: any): string => {
-      const s = str(v);
-      return s.replace(/[^0-9.,]/g, '').replace(',', '.').trim();
+    const cleanNumber = (v: any): number | undefined => {
+      if (v == null || v === '') return undefined;
+      if (typeof v === 'number') return v;
+      const n = parseFloat(String(v).replace(/[^0-9.,]/g, '').replace(',', '.'));
+      return isNaN(n) ? undefined : n;
     };
 
     // Features/genres: testo "RPG, FPS" → ["RPG", "FPS"]
@@ -80,7 +82,7 @@ export class SheetsService {
               id: str(r[SHEET_COLUMNS.id]) || `row-${i + 2}`,
               title: str(r[SHEET_COLUMNS.title]),
               platform: str(r[SHEET_COLUMNS.platform]),
-              price: cleanPrice(r[SHEET_COLUMNS.price]),
+              price: cleanNumber(r[SHEET_COLUMNS.price]),
               // buyDate: seriale numerico → "gg/mm/aaaa"; stringa preesistente → as-is
               buyDate: this.fromSheetsSerial(r[SHEET_COLUMNS.buyDate]),
               buyYear: str(r[SHEET_COLUMNS.buyYear]),
@@ -331,14 +333,14 @@ export class SheetsService {
    * Restituisce '' (stringa vuota) se il valore non è un numero valido,
    * così la cella viene lasciata vuota invece di contenere NaN o 0.
    */
-  private toNumber(value: string | undefined): number | '' {
-    if (!value) return '';
-    const n = parseFloat(value.replace(',', '.'));
+  private toNumber(value: number | string | undefined): number | '' {
+    if (value === undefined || value === null || value === '') return '';
+    const n = typeof value === 'number' ? value : parseFloat(value.replace(',', '.'));
     return isNaN(n) ? '' : n;
   }
 
   private toISODate(dateStr: string | undefined): string {
-  if (!dateStr) return '';
-  return /^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr : '';
-}
+    if (!dateStr) return '';
+    return /^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr : '';
+  }
 }

@@ -51,8 +51,8 @@ export class GameCardComponent {
 
   prizeFormatted(): string {
     const p = this.game().price;
-    if (!p || isNaN(parseFloat(p)) || parseFloat(p) <= 0) return '';
-    return parseFloat(p).toLocaleString(undefined, { style: 'currency', currency: 'EUR' });
+    if (!p || p <= 0) return '';
+    return p.toLocaleString(undefined, { style: 'currency', currency: 'EUR' });
   }
 
   // Estrae l'URL dall'interno della formula =IMAGE("...")

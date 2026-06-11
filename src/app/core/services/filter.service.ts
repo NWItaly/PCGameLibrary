@@ -110,10 +110,8 @@ export class FilterService {
         return false;
 
       // Prezzo — valore mancante trattato come 0
-      const price = g.price
-        ? parseFloat(g.price.replace(',', '.').replace('€', '').trim())
-        : 0;
-      if (!isNaN(price) && (price < f.priceMin || price > f.priceMax))
+      const price = g.price ?? 0;
+      if (price < f.priceMin || price > f.priceMax)
         return false;
 
       // Anno pubblicazione — valore mancante non passa se filtro attivo
@@ -160,8 +158,8 @@ export class FilterService {
       [...new Set(arr.filter((v): v is T => !!v))].sort();
 
     const prices = games
-      .map((g) => parseFloat((g.price ?? '').replace(',', '.').trim()))
-      .filter((n) => !isNaN(n) && n > 0);
+      .map((g) => g.price)
+      .filter((n): n is number => n !== undefined && n > 0);
 
     const releaseYears = games
       .map((g) => this.parseYear(g.releaseDate))
