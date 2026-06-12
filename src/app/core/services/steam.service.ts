@@ -27,6 +27,11 @@ interface SteamRawData {
   genres?: { id: string; description: string }[];
   categories?: { id: number; description: string }[];
   required_age: string | number;
+  ratings?: {
+    pegi?: { required_age?: string | number };
+    esrb?: { required_age?: string | number };
+    usk?: { required_age?: string | number };
+  };
 }
 
 /**
@@ -118,7 +123,7 @@ export class SteamService {
       vR: hasVr,
       releaseDate: this.convertDate(d.release_date?.date),
       image: d.header_image ?? '',
-      requiredAge: d.required_age ? String(d.required_age) : '',
+      requiredAge: this.extractRequiredAge(d),
     };
   }
 
@@ -145,5 +150,26 @@ export class SteamService {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return '';
     return date.toISOString().substring(0, 10);
+  }
+
+  /**
+   * Estrae l'età richiesta seguendo l'ordine di priorità:
+   * PEGI, ESRB, USK, infine required_age generico.
+   */
+  private extractRequiredAge(d: SteamRawData): string {
+    const ratings = d.ratings;
+    const candidates = [
+      ratings?.pegi?.required_age,
+      ratings?.esrb?.required_age,
+      ratings?.usk?.required_age,
+      d.required_age,
+    ];
+
+    for (const c of candidates) {
+      if (c !== undefined && c !== null && String(c).trim() !== '' && c !== 0) {
+        return String(c);
+      }
+    }
+    return '';
   }
 }

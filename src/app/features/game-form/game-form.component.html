@@ -14,7 +14,7 @@
     <!-- ── Titolo ──────────────────────────────────────────────────────────── -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>{{ 'form.title' | transloco }}</mat-label>
-      <input matInput formControlName=" title" placeholder="{{ 'form.titlePlaceholder' | transloco }}" />
+      <input matInput formControlName="title" placeholder="{{ 'form.titlePlaceholder' | transloco }}" />
       @if (form.controls.title.hasError('required') && form.controls.title.touched) {
       <mat-error>{{ 'form.required' | transloco }}</mat-error>
       }

@@ -103,9 +103,3 @@ Il workflow `.github/workflows/deploy.yml` inietta i secrets nel build e pubblic
 
 - `environment.ts` (sviluppo locale) contiene valori reali ma non è un problema pubblicarlo: il Client ID OAuth è by design pubblico per le SPA, e lo Spreadsheet ID da solo non dà accesso al foglio privato
 - `environment.prod.ts` contiene solo placeholder — i valori reali vengono iniettati solo durante il build in CI tramite GitHub Secrets e non sono mai visibili nel repository
-
-## Future implementazioni
-
-- Limitare le chiamate service di google per evitare blocchi/errori
-- Statistiche e grafici
-- Modifica dati "Steam"
