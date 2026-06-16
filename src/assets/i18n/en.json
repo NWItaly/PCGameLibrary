@@ -125,7 +125,10 @@
     "yes": "Yes",
     "no": "No",
     "apply": "Apply",
-    "reset": "Reset"
+    "reset": "Reset",
+    "duplicates": "Duplicates",
+    "duplicatesOnly": "Duplicates only",
+    "singlesOnly": "Singles only"
   },
   "stats": {
     "totalGames": "Total games",

@@ -125,7 +125,10 @@
     "yes": "Sì",
     "no": "No",
     "apply": "Applica",
-    "reset": "Reset"
+    "reset": "Reset",
+    "duplicates": "Duplicati",
+    "duplicatesOnly": "Solo duplicati",
+    "singlesOnly": "Solo singoli"
   },
   "stats": {
     "totalGames": "Giochi totali",

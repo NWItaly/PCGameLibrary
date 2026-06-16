@@ -56,6 +56,7 @@ export class FilterService {
   // Applica tutti i filtri a un array di giochi
   apply(games: Game[]): Game[] {
     const f = this.filters();
+    const duplicateIds = this.getDuplicateIds(games);
 
     return games.filter((g) => {
       // Ricerca testuale
@@ -134,6 +135,13 @@ export class FilterService {
         return false;
       }
 
+      // Duplicati — stesso titolo o stesso steamId
+      if (f.duplicates !== 'all') {
+        const isDuplicate = duplicateIds.has(g.id);
+        if (f.duplicates === 'duplicates' && !isDuplicate) return false;
+        if (f.duplicates === 'singles' && isDuplicate) return false;
+      }
+
       return true;
     });
   }
@@ -188,6 +196,32 @@ export class FilterService {
       buyYearMin: buyYears.length ? Math.min(...buyYears) : 2000,
       buyYearMax: buyYears.length ? Math.max(...buyYears) : new Date().getFullYear(),
     };
+  }
+
+  // Calcola gli id dei giochi che condividono titolo (case-insensitive) o steamId con almeno un altro
+  private getDuplicateIds(games: Game[]): Set<string> {
+    const titleCount = new Map<string, number>();
+    const steamIdCount = new Map<string, number>();
+
+    for (const g of games) {
+      const title = g.title?.trim().toLowerCase();
+      if (title) titleCount.set(title, (titleCount.get(title) ?? 0) + 1);
+
+      const steamId = g.steamId?.trim();
+      if (steamId) steamIdCount.set(steamId, (steamIdCount.get(steamId) ?? 0) + 1);
+    }
+
+    const duplicateIds = new Set<string>();
+    for (const g of games) {
+      const title = g.title?.trim().toLowerCase();
+      const steamId = g.steamId?.trim();
+      const isDup =
+        (!!title && (titleCount.get(title) ?? 0) > 1) ||
+        (!!steamId && (steamIdCount.get(steamId) ?? 0) > 1);
+      if (isDup) duplicateIds.add(g.id);
+    }
+
+    return duplicateIds;
   }
 
   // Helper per estrarre l'anno da una data in formato dd/MM/yyyy o yyyy

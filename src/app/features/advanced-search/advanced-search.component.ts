@@ -73,6 +73,7 @@ export class AdvancedSearchComponent implements OnInit {
       releaseYearMax: [f.releaseYearMax],
       buyYearMin: [f.buyYearMin],
       buyYearMax: [f.buyYearMax],
+      duplicates: [f.duplicates],
     });
   }
 
@@ -97,6 +98,7 @@ export class AdvancedSearchComponent implements OnInit {
       releaseYearMax: this.data.options.releaseYearMax,
       buyYearMin: this.data.options.buyYearMin,
       buyYearMax: this.data.options.buyYearMax,
+      duplicates: 'all',
     });
   }
 

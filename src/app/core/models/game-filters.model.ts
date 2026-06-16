@@ -29,6 +29,9 @@ export interface GameFilters {
 
   // Filtro età minima — array vuoto = nessun filtro
   requiredAges: number[];
+
+  // Filtro duplicati: 'all' = tutti, 'duplicates' = solo duplicati, 'singles' = solo singoli
+  duplicates: 'all' | 'duplicates' | 'singles';
 }
 
 // Valori di default — nessun filtro attivo
@@ -49,6 +52,7 @@ export const DEFAULT_FILTERS: GameFilters = {
   buyYearMin: 2000,
   buyYearMax: new Date().getFullYear(),
   requiredAges: [],
+  duplicates: 'all'
 };
 
 // Conta quanti filtri avanzati sono attivi (esclude query)
@@ -66,5 +70,6 @@ export function countActiveFilters(f: GameFilters, defaults: GameFilters): numbe
   if (f.releaseYearMin > defaults.releaseYearMin || f.releaseYearMax < defaults.releaseYearMax) count++;
   if (f.buyYearMin > defaults.buyYearMin || f.buyYearMax < defaults.buyYearMax) count++;
   if (f.requiredAges.length) count++;
+  if (f.duplicates !== 'all') count++;
   return count;
 }
