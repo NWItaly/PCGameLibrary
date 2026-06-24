@@ -36,8 +36,11 @@ export class BackupService {
     this.isRunning.set(true);
     try {
       await this.createBackup();
+      // Drive impiega qualche istante ad indicizzare il file appena copiato
+      await new Promise(resolve => setTimeout(resolve, 2000));
       const updated = await this.fetchBackupList();
       await this.pruneOldBackups(updated);
+      console.log('updated backups:', updated);
       const final = await this.fetchBackupList();
       this.backups.set(final);
     } finally {
@@ -52,16 +55,19 @@ export class BackupService {
       `name contains '${BACKUP_PREFIX}' and mimeType = 'application/vnd.google-apps.spreadsheet' and trashed = false`
     );
     const fields = encodeURIComponent('files(id,name,createdTime)');
-    const orderBy = encodeURIComponent('createdTime desc');
 
     const res = await fetch(
-      `https://www.googleapis.com/drive/v3/files?q=${query}&fields=${fields}&orderBy=${orderBy}`,
+      `https://www.googleapis.com/drive/v3/files?q=${query}&fields=${fields}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
     if (!res.ok) throw new Error(`Drive list error: ${res.status}`);
     const data = await res.json();
-    return (data.files ?? []) as BackupInfo[];
+
+    // Ordina per data decrescente lato client — non fidarsi dell'orderBy con q
+    return ((data.files ?? []) as BackupInfo[]).sort((a, b) =>
+      b.createdTime.localeCompare(a.createdTime)
+    );
   }
 
   // Controlla se esiste già un backup con la data di oggi nel nome

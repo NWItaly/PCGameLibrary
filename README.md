@@ -107,3 +107,4 @@ Il workflow `.github/workflows/deploy.yml` inietta i secrets nel build e pubblic
 ## Future implementazioni
 
 - Raggruppare le caratteristiche (es. `co-op` e `co-op online`)
+- Possibilità di eliminare generi e feature
