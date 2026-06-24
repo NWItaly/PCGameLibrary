@@ -314,4 +314,17 @@ export class GameFormComponent {
       this.steamBtnResetTimer = null;
     }, 5000);
   }
+
+  clearImage(): void {
+    this.form.controls.image.setValue('');
+  }
+
+  removeGenre(index: number): void {
+    this.steamFields.genres = this.steamFields.genres.filter((_, i) => i !== index);
+  }
+
+  removeFeature(index: number): void {
+    this.steamFields.features = this.steamFields.features.filter((_, i) => i !== index);
+  }
+
 }

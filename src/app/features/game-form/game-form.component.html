@@ -5,10 +5,10 @@
   <form [formGroup]="form" class="form-grid">
 
     @if (form.controls.image.value) {
-      <div class="full-width image-preview">
-        <img [src]="form.controls.image.value"
-          [alt]="('form.cover' | transloco) + ' ' + form.controls.title.value" style="margin-bottom: 14px;margin-left:5px;" />
-      </div>
+    <div class="full-width image-preview">
+      <img [src]="form.controls.image.value" [alt]="('form.cover' | transloco) + ' ' + form.controls.title.value"
+        style="margin-bottom: 14px;margin-left:5px;" />
+    </div>
     }
 
     <!-- ── Titolo ──────────────────────────────────────────────────────────── -->
@@ -141,6 +141,11 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>{{ 'form.imageUrl' | transloco }}</mat-label>
       <input matInput formControlName="image" />
+      @if (form.controls.image.value) {
+      <button matSuffix mat-icon-button type="button" (click)="clearImage()">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
     </mat-form-field>
 
     <div class="steam-cover-row full-width">
@@ -167,8 +172,13 @@
       <div class="chip-group">
         <span class="chip-group-label">{{ 'form.genres' | transloco }}</span>
         <mat-chip-set>
-          @for (g of steamFields.genres; track g) {
-          <mat-chip>{{ g }}</mat-chip>
+          @for (g of steamFields.genres; track g; let i = $index) {
+          <mat-chip (removed)="removeGenre(i)">
+            {{ g }}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
           }
         </mat-chip-set>
       </div>
@@ -178,8 +188,13 @@
       <div class="chip-group">
         <span class="chip-group-label">{{ 'form.features' | transloco }}</span>
         <mat-chip-set>
-          @for (f of steamFields.features; track f) {
-          <mat-chip>{{ f }}</mat-chip>
+          @for (f of steamFields.features; track f; let i = $index) {
+          <mat-chip (removed)="removeFeature(i)">
+            {{ f }}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
           }
         </mat-chip-set>
       </div>
