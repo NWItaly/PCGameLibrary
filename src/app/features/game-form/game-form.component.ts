@@ -203,7 +203,7 @@ export class GameFormComponent {
    * - Il confronto è case-insensitive; la parola "The" viene preservata in forma canonica.
    */
   private normalizeTitle(name: string): string {
-    const trimmed = name.trim();
+    const trimmed = name.trim().replace(/[®™©]/g, '').trim();
     const match = trimmed.match(/^The\s+(.+)$/i);
     if (match) {
       return `${match[1]} (The)`;
