@@ -33,12 +33,30 @@
             (click)="selectGame(game)">
             <img class="result-cover" [src]="game.logo" [alt]="game.name" />
             <div class="result-info">
-                <span class="result-title">{{ game.name }}</span>
+                <div class="result-title-row">
+                    <span class="result-title">{{ game.name }}</span>
+                    <a class="result-steam-link" [href]="'https://store.steampowered.com/app/' + game.appId"
+                        target="_blank" rel="noopener noreferrer" (click)="$event.stopPropagation()">
+                        <mat-icon>open_in_new</mat-icon>
+                    </a>
+                </div>
+                @let owned = findInLibrary(game.appId);
+                @if (owned.length > 0) {
+                <span class="result-in-library">
+                    <mat-icon>library_add_check</mat-icon>
+                    {{ 'steam.alreadyOwned' | transloco }}
+                    <span class="result-platforms">
+                        @for (g of owned; track g.rowIndex) {
+                        <app-platform-icon [platform]="g.platform!" />
+                        }
+                    </span>
+                </span>
+                }
                 @if (game.price) {
                 <span class="result-price">{{ game.price }}</span>
                 }
             </div>
-            <mat-icon class="result-check">check_circle</mat-icon>
+            <!-- <mat-icon class="result-check">check_circle</mat-icon> -->
         </div>
         }
     </div>

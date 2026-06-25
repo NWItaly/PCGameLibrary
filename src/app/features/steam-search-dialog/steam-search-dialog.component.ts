@@ -14,7 +14,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoModule } from '@jsverse/transloco';
 import { SteamService, SteamSearchResult } from '../../core/services/steam.service';
-import { GameFormComponent } from '../game-form/game-form.component';
+import { PlatformIconComponent } from '../../shared/components/platform-icon/platform-icon.component';
+import { GameStoreService } from '../../core/services/game-store.service';
+import { Game } from '../../core/models/game.model';
 
 @Component({
     selector: 'app-steam-search-dialog',
@@ -29,6 +31,7 @@ import { GameFormComponent } from '../game-form/game-form.component';
         MatIconModule,
         MatProgressSpinnerModule,
         TranslocoModule,
+        PlatformIconComponent,
     ],
     templateUrl: './steam-search-dialog.component.html',
     styleUrl: './steam-search-dialog.component.scss',
@@ -37,6 +40,7 @@ export class SteamSearchDialogComponent {
     private readonly dialogRef = inject(MatDialogRef<SteamSearchDialogComponent>);
     private readonly dialog = inject(MatDialog);
     private readonly steamService = inject(SteamService);
+    private readonly store = inject(GameStoreService);
 
     readonly searchCtrl = new FormControl('');
     readonly results = signal<SteamSearchResult[]>([]);
@@ -45,8 +49,11 @@ export class SteamSearchDialogComponent {
     readonly selectedGame = signal<SteamSearchResult | null>(null);
 
     search(): void {
-        const term = this.searchCtrl.value?.trim();
-        if (!term) return;
+        const raw = this.searchCtrl.value?.trim() ?? '';
+        if (!raw) return;
+
+        // Normalizza: rimuove apostrofi e caratteri che confondono Steam
+        const term = raw.replace(/['''`]/g, '').trim();
 
         this.loading.set(true);
         this.noResults.set(false);
@@ -64,6 +71,13 @@ export class SteamSearchDialogComponent {
                 this.noResults.set(true);
             },
         });
+    }
+
+    findInLibrary(appId: string): Game[] {
+        const result = this.store.games().filter(g =>
+            g.steamId && String(g.steamId).trim() === appId.trim()
+        );
+        return result;
     }
 
     selectGame(game: SteamSearchResult): void {

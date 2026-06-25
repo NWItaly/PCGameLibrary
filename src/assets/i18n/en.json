@@ -137,7 +137,8 @@
     "noResults": "No results found.",
     "addManual": "Add manually",
     "addViaSteam": "Add from Steam",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "alreadyOwned": "Already owned"
   },
   "stats": {
     "totalGames": "Total games",

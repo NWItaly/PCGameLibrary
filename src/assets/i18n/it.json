@@ -137,7 +137,8 @@
     "noResults": "Nessun risultato trovato.",
     "addManual": "Aggiungi manualmente",
     "addViaSteam": "Aggiungi da Steam",
-    "confirm": "Conferma"
+    "confirm": "Conferma",
+    "alreadyOwned": "Già in libreria"
   },
   "stats": {
     "totalGames": "Giochi totali",
