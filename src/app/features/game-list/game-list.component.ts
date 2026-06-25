@@ -24,6 +24,8 @@ import { AdvancedSearchComponent } from '../advanced-search/advanced-search.comp
 import { Game } from '../../core/models/game.model';
 import { GameStoreService } from '../../core/services/game-store.service';
 import { DatePipe } from '@angular/common';
+import { SteamSearchDialogComponent } from '../steam-search-dialog/steam-search-dialog.component';
+import { SteamSearchResult } from '../../core/services/steam.service';
 
 export type ViewMode = 'card' | 'table';
 
@@ -276,15 +278,24 @@ export class GameListComponent {
     }
   }
 
-  /**
-   * Converte "gg/mm/aaaa" in "aaaa-mm-gg" per un ordinamento lessicografico corretto.
-   * Restituisce '' per valori assenti o in formato non riconosciuto (finiscono in fondo).
-   */
-  private dateToISO(date: string | undefined): string {
-    if (!date) return '';
-    const parts = date.split('/');
-    if (parts.length !== 3) return '';
-    const [d, m, y] = parts;
-    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+  openSteamSearch(): void {
+    const searchRef = this.dialog.open(SteamSearchDialogComponent, { width: '560px' });
+    searchRef.afterClosed().subscribe((selected: SteamSearchResult | undefined) => {
+      if (!selected) return;
+      const formRef = this.dialog.open(GameFormComponent, {
+        data: { prefillSteamId: selected.appId },
+        width: '640px',
+      });
+      formRef.afterClosed().subscribe((result) => {
+        if (!result) return;
+        this.sheets.addGame(result).subscribe({
+          next: () => {
+            this.snackbar.open(this.translate.t('success.added'), undefined, { duration: 2500 });
+            this.store.reload();
+          },
+          error: () => this.snackbar.open(this.translate.t('errors.addFailed'), 'OK', { duration: 4000 }),
+        });
+      });
+    });
   }
 }

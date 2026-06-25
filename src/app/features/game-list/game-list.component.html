@@ -156,8 +156,19 @@
 
 <!-- FAB "Aggiungi gioco" — visibile solo se loggato -->
 @if (auth.isLoggedIn()) {
-<button mat-fab color="primary" class="add-fab" [matTooltip]="'list.add' | transloco" matTooltipPosition="left"
-  (click)="openAddDialog()">
+<button mat-raised-button color="primary" [matMenuTriggerFor]="addMenu" class="add-fab">
   <mat-icon>add</mat-icon>
+  <mat-icon>arrow_drop_down</mat-icon>
 </button>
+
+<mat-menu #addMenu="matMenu">
+  <button mat-menu-item (click)="openAddDialog()">
+    <mat-icon>edit_note</mat-icon>
+    {{ 'steam.addManual' | transloco }}
+  </button>
+  <button mat-menu-item (click)="openSteamSearch()">
+    <mat-icon>search</mat-icon>
+    {{ 'steam.addViaSteam' | transloco }}
+  </button>
+</mat-menu>
 }

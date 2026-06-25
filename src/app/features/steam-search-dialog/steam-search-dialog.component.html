@@ -1,0 +1,54 @@
+<!-- steam-search-dialog.component.html -->
+<h2 mat-dialog-title>{{ 'steam.searchTitle' | transloco }}</h2>
+
+<mat-dialog-content>
+
+    <!-- ── Campo ricerca + pulsante ─────────────────────────────────────────── -->
+    <div class="search-row">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>{{ 'steam.searchLabel' | transloco }}</mat-label>
+            <input matInput [formControl]="searchCtrl" autocomplete="off" (keyup.enter)="search()" />
+        </mat-form-field>
+        <button mat-stroked-button type="button" class="search-btn" [disabled]="!searchCtrl.value?.trim() || loading()"
+            (click)="search()">
+            @if (loading()) {
+            <mat-spinner diameter="18" />
+            } @else {
+            <mat-icon>search</mat-icon>
+            }
+            {{ 'steam.search' | transloco }}
+        </button>
+    </div>
+
+    <!-- ── Nessun risultato ──────────────────────────────────────────────────── -->
+    @if (noResults()) {
+    <p class="no-results">{{ 'steam.noResults' | transloco }}</p>
+    }
+
+    <!-- ── Lista risultati ──────────────────────────────────────────────────── -->
+    @if (results().length > 0) {
+    <div class="results-list">
+        @for (game of results(); track game.appId) {
+        <div class="result-item" [class.result-item--selected]="selectedGame()?.appId === game.appId"
+            (click)="selectGame(game)">
+            <img class="result-cover" [src]="game.logo" [alt]="game.name" />
+            <div class="result-info">
+                <span class="result-title">{{ game.name }}</span>
+                @if (game.price) {
+                <span class="result-price">{{ game.price }}</span>
+                }
+            </div>
+            <mat-icon class="result-check">check_circle</mat-icon>
+        </div>
+        }
+    </div>
+    }
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>{{ 'form.cancel' | transloco }}</button>
+    <button mat-flat-button color="primary" [disabled]="!selectedGame()" (click)="confirm()">
+        {{ 'steam.confirm' | transloco }}
+    </button>
+</mat-dialog-actions>

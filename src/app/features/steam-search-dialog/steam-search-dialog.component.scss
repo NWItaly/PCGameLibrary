@@ -1,0 +1,95 @@
+// steam-search-dialog.component.scss
+
+mat-dialog-content {
+    padding-top: 12px !important;
+    overflow-x: hidden;
+}
+
+.search-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 8px;
+
+    .search-field {
+        flex: 1;
+    }
+
+    .search-btn {
+        flex-shrink: 0;
+        height: 56px;
+        min-width: 110px;
+        margin-bottom: 22px;
+    }
+}
+
+.no-results {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 14px;
+    padding: 8px 0;
+}
+
+.results-list {
+    max-height: 420px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.result-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    background: transparent;
+
+    &:hover {
+        background: rgba(0, 150, 136, 0.12);
+    }
+
+    &--selected {
+        background: rgba(0, 150, 136, 0.24);
+    }
+
+    .result-cover {
+        width: 180px;
+        height: auto;
+        border-radius: 4px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .result-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .result-title {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--mat-sys-on-surface);
+    }
+
+    .result-price {
+        font-size: 13px;
+        color: var(--mat-sys-on-surface-variant);
+    }
+
+    // Check visibile solo su riga selezionata
+    .result-check {
+        color: var(--mat-sys-primary);
+        opacity: 0;
+        transition: opacity 0.15s;
+        flex-shrink: 0;
+    }
+
+    &--selected .result-check {
+        opacity: 1;
+    }
+}

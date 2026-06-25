@@ -31,3 +31,27 @@ function getSteamData(appId) {
 
   return gameData.data;
 }
+
+function searchSteamGames(term) {
+  const url = `https://store.steampowered.com/search/results/?` +
+    `term=${encodeURIComponent(term)}&json=1&cc=it&l=italian&category1=998`; // category1=998 = solo giochi
+  
+  const response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+  if (response.getResponseCode() !== 200) {
+    return { success: false, results: [] };
+  }
+  
+  const data = JSON.parse(response.getContentText());
+  const items = (data.items || []).map(item => {
+    // estrai appId dall'URL del logo
+    const match = item.logo ? item.logo.match(/steam\/\w+\/(\d+)/) : null;
+    return {
+      appId: match ? match[1] : null,
+      name:  item.name,
+      logo:  item.logo,
+      price: item.price  // stringa già localizzata
+    };
+  }).filter(i => i.appId !== null);
+  
+  return { success: true, results: items };
+}

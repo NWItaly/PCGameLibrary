@@ -130,6 +130,15 @@
     "duplicatesOnly": "Solo duplicati",
     "singlesOnly": "Solo singoli"
   },
+  "steam": {
+    "searchTitle": "Cerca su Steam",
+    "search": "Cerca",
+    "searchLabel": "Titolo del gioco",
+    "noResults": "Nessun risultato trovato.",
+    "addManual": "Aggiungi manualmente",
+    "addViaSteam": "Aggiungi da Steam",
+    "confirm": "Conferma"
+  },
   "stats": {
     "totalGames": "Giochi totali",
     "totalSpend": "Spesa totale",

@@ -57,7 +57,7 @@ export class BackupService {
     const fields = encodeURIComponent('files(id,name,createdTime)');
 
     const res = await fetch(
-      `https://www.googleapis.com/drive/v3/files?q=${query}&fields=${fields}`,
+      `https://www.googleapis.com/drive/v3/files?q=${query}&fields=${fields}&pageSize=20&corpora=user`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
 

@@ -130,6 +130,15 @@
     "duplicatesOnly": "Duplicates only",
     "singlesOnly": "Singles only"
   },
+  "steam": {
+    "searchTitle": "Search on Steam",
+    "search": "Search",
+    "searchLabel": "Game title",
+    "noResults": "No results found.",
+    "addManual": "Add manually",
+    "addViaSteam": "Add from Steam",
+    "confirm": "Confirm"
+  },
   "stats": {
     "totalGames": "Total games",
     "totalSpend": "Total spent",

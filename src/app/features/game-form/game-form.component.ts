@@ -80,6 +80,9 @@ export const PLATFORMS = [
   'Riot', 'Meta', 'Xbox', 'Battle.Net', 'CD/DVD', 'Download',
 ] as const;
 
+/** Dati passati al dialog: Game in modifica, o solo prefillSteamId per nuovo gioco da Steam */
+type GameFormDialogData = Game | { prefillSteamId: string } | null;
+
 @Component({
   selector: 'app-game-form',
   standalone: true,
@@ -110,7 +113,7 @@ export const PLATFORMS = [
 })
 export class GameFormComponent {
   readonly dialogRef = inject(MatDialogRef<GameFormComponent>);
-  readonly data: Game | null = inject(MAT_DIALOG_DATA);
+  private readonly rawData: GameFormDialogData = inject(MAT_DIALOG_DATA);
 
   private readonly fb = inject(FormBuilder);
   private readonly steamService = inject(SteamService);
@@ -142,18 +145,24 @@ export class GameFormComponent {
    * vengono aggiornati da loadFromSteam() dopo il fetch.
    */
   steamFields = {
-    name: this.data?.title ?? '',
-    features: this.data?.features ?? ([] as string[]),
-    genres: this.data?.genres ?? ([] as string[]),
-    italianSupport: this.data?.italianSupport ?? false,
-    vR: this.data?.vR ?? false,
-    releaseDate: this.data?.releaseDate ?? '',
-    image: this.data?.image ?? '',
+    name: this.game?.title ?? '',
+    features: this.game?.features ?? ([] as string[]),
+    genres: this.game?.genres ?? ([] as string[]),
+    italianSupport: this.game?.italianSupport ?? false,
+    vR: this.game?.vR ?? false,
+    releaseDate: this.game?.releaseDate ?? '',
+    image: this.game?.image ?? '',
   };
+
+  /** Game in modifica, null se aggiunta */
+  private get game(): Game | null {
+    if (!this.rawData || 'prefillSteamId' in this.rawData) return null;
+    return this.rawData;
+  }
 
   /** True se il dialog è aperto in modalità modifica */
   get isEditMode(): boolean {
-    return !!this.data;
+    return !!this.game;
   }
 
   /**
@@ -163,22 +172,22 @@ export class GameFormComponent {
    * Con ItalianDateAdapter, matDatepickerParse non scatta per date valide in formato it-IT.
    */
   form = this.fb.nonNullable.group({
-    title: [this.data?.title ?? '', Validators.required],
-    platform: [this.data?.platform ?? '', Validators.required],
-    price: [this.data?.price ?? 0, Validators.required],
-    buyDate: new FormControl<Date | null>(this.parseDate(this.data?.buyDate) ?? new Date()),
-    steamId: [this.data?.steamId ?? ''],
-    stateStefano: [this.data?.stateStefano ?? 'Non interessa'],
-    stateErica: [this.data?.stateErica ?? 'Non interessa'],
-    stateAlessandro: [this.data?.stateAlessandro ?? 'Non interessa'],
+    title: [this.game?.title ?? '', Validators.required],
+    platform: [this.game?.platform ?? '', Validators.required],
+    price: [this.game?.price ?? 0, Validators.required],
+    buyDate: new FormControl<Date | null>(this.parseDate(this.game?.buyDate) ?? new Date()),
+    steamId: [this.game?.steamId ?? ''],
+    stateStefano: [this.game?.stateStefano ?? 'Non interessa'],
+    stateErica: [this.game?.stateErica ?? 'Non interessa'],
+    stateAlessandro: [this.game?.stateAlessandro ?? 'Non interessa'],
     // Memorizzato come stringa "1"–"5"; il service lo scrive come number per la smart chip
-    rating: [this.data?.rating ?? ''],
+    rating: [this.game?.rating ?? ''],
     // Età minima: '' = non specificata
-    requiredAge: [this.data?.requiredAge ?? ''],
-    releaseDate: new FormControl<Date | null>(this.parseDate(this.data?.releaseDate)),
-    italianSupport: [this.data?.italianSupport ?? false],
-    vR: [this.data?.vR ?? false],
-    image: [this.data?.image ?? ''],
+    requiredAge: [this.game?.requiredAge ?? ''],
+    releaseDate: new FormControl<Date | null>(this.parseDate(this.game?.releaseDate)),
+    italianSupport: [this.game?.italianSupport ?? false],
+    vR: [this.game?.vR ?? false],
+    image: [this.game?.image ?? ''],
   });
 
   /** Valore numerico della valutazione corrente (0 = non impostata) */
@@ -194,6 +203,15 @@ export class GameFormComponent {
   /** Azzera la valutazione */
   clearRating(): void {
     this.form.controls.rating.setValue('');
+  }
+
+  constructor() {
+    // Se aperto da SteamSearchDialog, pre-imposta steamId e triggera il caricamento
+    if (this.rawData && 'prefillSteamId' in this.rawData) {
+      const id = this.rawData.prefillSteamId;
+      this.form.controls.steamId.setValue(id);
+      setTimeout(() => this.loadFromSteam(), 100);
+    }
   }
 
   /**

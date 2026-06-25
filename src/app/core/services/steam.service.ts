@@ -55,6 +55,31 @@ interface ScriptApiResponse {
   };
 }
 
+export interface SteamSearchResult {
+  appId: string;
+  name: string;
+  logo: string;
+  price: string;
+}
+
+interface SteamSearchResponse {
+  success: boolean;
+  results: SteamSearchResult[];
+}
+
+interface ScriptSearchApiResponse {
+  response?: { result: SteamSearchResponse };
+  error?: {
+    code: number;
+    message: string;
+    status: string;
+    details?: {
+      errorMessage?: string;
+      scriptStackTraceElements?: { function: string; lineNumber: number }[];
+    }[];
+  };
+}
+
 const SCRIPT_API = 'https://script.googleapis.com/v1/scripts';
 
 @Injectable({ providedIn: 'root' })
@@ -171,5 +196,30 @@ export class SteamService {
       }
     }
     return '';
+  }
+
+  searchGames(term: string): Observable<SteamSearchResult[]> {
+    return from(this.auth.ensureValidToken()).pipe(
+      switchMap(() => {
+        const url = `${SCRIPT_API}/${environment.steamScriptId}:run`;
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${this.auth.accessToken()}`,
+          'Content-Type': 'application/json',
+        });
+        const body = {
+          function: 'searchSteamGames',
+          parameters: [term],
+          devMode: false,
+        };
+        return this.http.post<ScriptSearchApiResponse>(url, body, { headers });
+      }),
+      map(res => {
+        if (res.error) {
+          const detail = res.error.details?.[0]?.errorMessage;
+          throw new Error(detail ?? res.error.message ?? 'Errore Apps Script');
+        }
+        return res.response?.result?.results ?? [];
+      })
+    );
   }
 }
