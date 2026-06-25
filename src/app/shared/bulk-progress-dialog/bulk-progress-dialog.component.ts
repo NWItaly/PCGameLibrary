@@ -10,6 +10,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
 import { BulkOperationService } from '../../core/services/bulk-operation.service';
 import { BulkOperationState, BulkProgressDialogData, BulkRecordResult } from '../../core/services/bulk-operation.types';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
     selector: 'app-bulk-progress-dialog',
@@ -23,6 +24,7 @@ import { BulkOperationState, BulkProgressDialogData, BulkRecordResult } from '..
         MatChipsModule,
         MatExpansionModule,
         MatDividerModule,
+        TranslocoModule,
     ],
     templateUrl: './bulk-progress-dialog.component.html',
     styleUrls: ['./bulk-progress-dialog.component.scss'],

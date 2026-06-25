@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
 import { BulkOperationOptions, DEFAULT_BULK_OPTIONS } from '../../core/services/bulk-operation.types';
+import { TranslocoModule } from '@jsverse/transloco';
 
 export interface BulkSettingsDialogData {
     operationLabel: string;
@@ -27,6 +28,7 @@ export interface BulkSettingsDialogData {
         MatFormFieldModule,
         MatDividerModule,
         FormsModule,
+        TranslocoModule,
     ],
     templateUrl: './bulk-settings-dialog.component.html',
     styleUrls: ['./bulk-settings-dialog.component.scss'],

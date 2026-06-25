@@ -1,18 +1,18 @@
 <!-- bulk-settings-dialog.component.html -->
 <h2 mat-dialog-title class="dialog-title">
     <mat-icon class="dialog-title-icon">tune</mat-icon>
-    Impostazioni — {{ data.operationLabel }}
+    {{ 'bulk.title' | transloco: { operationLabel: data.operationLabel } }}
 </h2>
 
 <mat-dialog-content class="dialog-content">
 
-    <h3 class="section-label">Filtri</h3>
+    <h3 class="section-label">{{ 'bulk.filters' | transloco }}</h3>
 
     <div class="option-row">
         <div class="option-text">
-            <span class="option-title">Ritenta solo i giochi con errori precedenti</span>
+            <span class="option-title">{{ 'bulk.retryErrorsOnlyTitle' | transloco }}</span>
             <span class="option-hint">
-                Elabora solo i record che hanno un valore nella colonna Errore del foglio
+                {{ 'bulk.retryErrorsOnlyHint' | transloco }}
             </span>
         </div>
         <mat-slide-toggle [(ngModel)]="options.onlyErrors" color="primary" />
@@ -20,32 +20,32 @@
 
     <mat-divider class="section-divider" />
 
-    <h3 class="section-label">Range righe</h3>
+    <h3 class="section-label">{{ 'bulk.rowRange' | transloco }}</h3>
     <p class="section-hint">
-        Lascia vuoto per elaborare dall'inizio o fino alla fine del foglio.
-        La riga 1 è l'intestazione, i dati iniziano dalla riga 2.
+        {{ 'bulk.rowRangeHint1' | transloco }}
+        {{ 'bulk.rowRangeHint2' | transloco }}
     </p>
 
     <div class="range-row">
         <mat-form-field appearance="outline" class="range-field">
-            <mat-label>Da riga</mat-label>
+            <mat-label>{{ 'bulk.fromRow' | transloco }}</mat-label>
             <input matInput type="number" min="2" placeholder="es. 2" [(ngModel)]="fromRow" />
-            <mat-hint>Inclusa</mat-hint>
+            <mat-hint>{{ 'bulk.inclusive' | transloco }}</mat-hint>
         </mat-form-field>
 
         <span class="range-separator">—</span>
 
         <mat-form-field appearance="outline" class="range-field">
-            <mat-label>A riga</mat-label>
+            <mat-label>{{ 'bulk.toRow' | transloco }}</mat-label>
             <input matInput type="number" min="2" placeholder="es. 500" [(ngModel)]="toRow" />
-            <mat-hint>Inclusa</mat-hint>
+            <mat-hint>{{ 'bulk.inclusive' | transloco }}</mat-hint>
         </mat-form-field>
     </div>
 
     @if (rangeInvalid) {
     <p class="range-error">
         <mat-icon>warning</mat-icon>
-        La riga di inizio deve essere minore o uguale alla riga di fine
+        {{ 'bulk.rangeInvalid' | transloco }}
     </p>
     }
 
@@ -54,12 +54,12 @@
 <mat-dialog-actions class="dialog-actions">
     <button mat-button (click)="reset()">
         <mat-icon>restart_alt</mat-icon>
-        Ripristina default
+        {{ 'bulk.resetToDefault' | transloco }}
     </button>
     <span class="actions-spacer"></span>
-    <button mat-button (click)="cancel()">Annulla</button>
+    <button mat-button (click)="cancel()">{{ 'form.cancel' | transloco }}</button>
     <button mat-flat-button color="primary" [disabled]="rangeInvalid" (click)="confirm()">
         <mat-icon>check</mat-icon>
-        Conferma
+        {{ 'form.confirm' | transloco }}
     </button>
 </mat-dialog-actions>

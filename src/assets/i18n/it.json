@@ -3,7 +3,9 @@
     "title": "Libreria Giochi",
     "stats": "Statistiche",
     "privacy": "Privacy Policy",
-    "menu": "Menu"
+    "menu": "Menu",
+    "home": "Home",
+    "admin": "Operazioni massive"
   },
   "sidenav": {
     "view": "Visualizzazione",
@@ -78,7 +80,8 @@
     "save": "Salva",
     "add": "Aggiungi",
     "required": "Campo obbligatorio",
-    "none": "Nessuno"
+    "none": "Nessuno",
+    "confirm": "Conferma"
   },
   "actions": {
     "edit": "Modifica",
@@ -106,6 +109,43 @@
   "language": {
     "italian": "Italiano",
     "english": "Inglese"
+  },
+  "bulk": {
+    "title": "Impostazioni — {{ operationLabel }}",
+    "filters": "Filtri",
+    "retryErrorsOnlyTitle": "Ritenta solo i giochi con errori precedenti",
+    "retryErrorsOnlyHint": "Elabora solo i record che hanno un valore nella colonna Errore del foglio",
+    "rowRange": "Range righe",
+    "rowRangeHint1": "Lascia vuoto per elaborare dall'inizio o fino alla fine del foglio.",
+    "rowRangeHint2": "La riga 1 è l'intestazione, i dati iniziano dalla riga 2.",
+    "fromRow": "Da riga",
+    "inclusive": "Inclusa",
+    "toRow": "A riga",
+    "rangeInvalid": "La riga di inizio deve essere minore o uguale alla riga di fine",
+    "resetToDefault": "Ripristina default"
+  },
+  "admin": {
+    "title": "Operazioni massive",
+    "subtitle": "Funzionalità di gestione bulk per la libreria giochi",
+    "sectionSteam": "Steam",
+    "steamUpdateTitle": "Aggiorna dati Steam",
+    "steamUpdateSubtitle": "Aggiorna generi, feature, supporto italiano, VR, data di uscita, immagine e età minima per tutti i giochi con Steam ID",
+    "updateDetail1": "~2 sec per gioco con Steam ID · scrittura ogni 50 giochi",
+    "updateDetail2": "I record vengono marcati [PENDING] prima dell'avvio — riprende da dove si era interrotto",
+    "updateDetail3": "Gli errori vengono scritti nella colonna \"Errore\" del foglio",
+    "onlyErrors": "Solo errori",
+    "rows": "Righe",
+    "end": "fine",
+    "allGames": "Tutti i giochi",
+    "settings": "Impostazioni",
+    "startUpdate": "Avvia aggiornamento",
+    "start": "Avvia",
+    "clearSheetErrorsTitle": "Svuota colonna Errore",
+    "clearSheetErrorsSubtitle": "Cancella il contenuto della colonna Errore per tutti i giochi del foglio",
+    "clearWarning1": "L'operazione è irreversibile — usare dopo aver verificato i dati",
+    "clearWarning2": "Rimuove anche i marker [PENDING] lasciati da operazioni interrotte",
+    "clearingInProgress": "Pulizia in corso…",
+    "clearErrors": "Svuota errori"
   },
   "search": {
     "advancedTitle": "Ricerca avanzata",

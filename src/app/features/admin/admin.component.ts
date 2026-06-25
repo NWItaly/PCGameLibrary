@@ -14,6 +14,7 @@ import { SheetsService } from '../../core/services/sheets.service';
 import { BulkProgressDialogComponent } from '../../shared/bulk-progress-dialog/bulk-progress-dialog.component';
 import { BulkSettingsDialogComponent } from '../../shared/bulk-settings-dialog/bulk-settings-dialog.component';
 import { BulkOperationOptions, DEFAULT_BULK_OPTIONS } from '../../core/services/bulk-operation.types';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
     selector: 'app-admin',
@@ -25,6 +26,7 @@ import { BulkOperationOptions, DEFAULT_BULK_OPTIONS } from '../../core/services/
         MatDividerModule,
         MatTooltipModule,
         MatProgressSpinnerModule,
+        TranslocoModule,
     ],
     templateUrl: './admin.component.html',
     styleUrls: ['./admin.component.scss'],
