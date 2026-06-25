@@ -3,7 +3,9 @@
     "title": "Game Library",
     "stats": "Stats",
     "privacy": "Privacy Policy",
-    "menu": "Menu"
+    "menu": "Menu",
+    "home": "Home",
+    "admin": "Bulk operations"
   },
   "sidenav": {
     "view": "View",
@@ -78,7 +80,8 @@
     "save": "Save",
     "add": "Add",
     "required": "Required field",
-    "none": "None"
+    "none": "None",
+    "confirm": "Confirm"
   },
   "actions": {
     "edit": "Edit",
@@ -107,6 +110,43 @@
     "italian": "Italian",
     "english": "English"
   },
+  "bulk": {
+    "title": "Settings — {{ operationLabel }}",
+    "filters": "Filters",
+    "retryErrorsOnlyTitle": "Retry only games with previous errors",
+    "retryErrorsOnlyHint": "Process only records that contain a value in the sheet's Error column",
+    "rowRange": "Row range",
+    "rowRangeHint1": "Leave empty to process from the beginning or to the end of the sheet.",
+    "rowRangeHint2": "Row 1 is the header, data starts on row 2.",
+    "fromRow": "From row",
+    "inclusive": "Inclusive",
+    "toRow": "To row",
+    "rangeInvalid": "Start row must be less than or equal to end row",
+    "resetToDefault": "Reset to default"
+  },
+  "admin": {
+    "title": "Bulk operations",
+    "subtitle": "Bulk management features for the game library",
+    "sectionSteam": "Steam",
+    "steamUpdateTitle": "Update Steam data",
+    "steamUpdateSubtitle": "Update genres, features, Italian support, VR, release date, image and minimum age for all games with a Steam ID",
+    "updateDetail1": "~2 sec per game with Steam ID · write every 50 games",
+    "updateDetail2": "Records are marked [PENDING] before starting — resumes where it left off",
+    "updateDetail3": "Errors are written to the sheet's \"Error\" column",
+    "onlyErrors": "Errors only",
+    "rows": "Rows",
+    "end": "end",
+    "allGames": "All games",
+    "settings": "Settings",
+    "startUpdate": "Start update",
+    "start": "Start",
+    "clearSheetErrorsTitle": "Clear Error column",
+    "clearSheetErrorsSubtitle": "Delete the contents of the sheet's Error column for all games",
+    "clearWarning1": "This operation is irreversible — use after verifying your data",
+    "clearWarning2": "Also removes [PENDING] markers left by interrupted operations",
+    "clearingInProgress": "Clearing in progress…",
+    "clearErrors": "Clear errors"
+  },
   "search": {
     "advancedTitle": "Advanced search",
     "platform": "Platform",
@@ -129,6 +169,16 @@
     "duplicates": "Duplicates",
     "duplicatesOnly": "Duplicates only",
     "singlesOnly": "Singles only"
+  },
+  "steam": {
+    "searchTitle": "Search on Steam",
+    "search": "Search",
+    "searchLabel": "Game title",
+    "noResults": "No results found.",
+    "addManual": "Add manually",
+    "addViaSteam": "Add from Steam",
+    "confirm": "Confirm",
+    "alreadyOwned": "Already owned"
   },
   "stats": {
     "totalGames": "Total games",
